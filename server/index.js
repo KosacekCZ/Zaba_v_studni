@@ -3,13 +3,12 @@ var server = require("http").Server(app);
 var io = require("socket.io")(server);
 var players = []
 
-server.listen(30003, function () {
+server.listen(3003, function () {
     console.log("[WELL] Server is now running.")
 })
 
 io.on('connection', function (socket) {
     console.log("Player has connected to the server.")
-
     socket.emit('socketID', {id: socket.id});
     socket.emit('getPlayers', players)
     socket.broadcast.emit('newPlayer', {id: socket.id});

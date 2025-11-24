@@ -3,20 +3,52 @@ package io.amogus.entities;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
+import io.amogus.managers.SpriteManager;
 
-public class Entity {
+public abstract class Entity {
     protected Vector2 prevPos;
-    protected Texture texture;
+    protected Vector2 pos;
+    protected String texture;
     protected Sprite sprite;
     protected int health;
     protected int damage;
     protected float speed;
+    protected boolean isDestroy;
+    protected SpriteManager sm;
 
-    public Entity(float x, float y, Texture texture) {
-        sprite = new Sprite(texture);
-        sprite.setPosition(x, y);
-        sprite.setSize(sprite.getWidth(), sprite.getHeight());
+    public Entity(float x, float y, String texture) {
+        this.texture = texture;
+        pos = new Vector2(x, y);
+        sprite = new Sprite();
+        sprite.setSize(32f, 32f);
         prevPos = new Vector2(getX(), getY());
+        sm = SpriteManager.getInstance();
+        this.isDestroy = false;
+    }
+
+    public Entity(float x, float y, String texture, int health , int damage, float speed) {
+        sprite = new Sprite();
+        sprite.setPosition(x, y);
+        sprite.setSize(32f, 32f);
+        prevPos = new Vector2(getX(), getY());
+        this.health = health;
+        this.damage = damage;
+        this.speed = speed;
+        sm = SpriteManager.getInstance();
+        this.texture = texture;
+        this.isDestroy = false;
+    }
+
+    public abstract void update();
+
+    public abstract void onCollide(Entity e);
+
+    public void Destroy() {
+        this.isDestroy = true;
+    }
+
+    public boolean isDestroy() {
+        return isDestroy;
     }
 
     public boolean hasMoved() {
@@ -34,6 +66,10 @@ public class Entity {
 
     public float getY() {
         return sprite.getY();
+    }
+
+    public Vector2 getPos() {
+        return pos;
     }
 
     public float getWidth() {
