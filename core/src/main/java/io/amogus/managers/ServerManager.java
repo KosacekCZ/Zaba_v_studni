@@ -9,6 +9,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.List;
+import java.util.Map;
+
 public class ServerManager {
     private Socket socket;
     private static ServerManager instance;
@@ -35,88 +38,85 @@ public class ServerManager {
     }
 
     public void configSocketEvents() {
-        socket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
-            @Override
-            public void call(Object... objects) {
-                Gdx.app.log("SocketIO", "Connected");
-                String id = socket.id();
-                em.addPlayer(new Player(id, 100f, 100f,  100, 10, 10f, "player_green"));
+        socket.on(Socket.EVENT_CONNECT, args -> {
+            Gdx.app.log("SocketIO", "Connected");
+            String id = socket.id();
+            em.addPlayer(new Player(id, 100f, 100f, 100, 10, 10f, "player_green"));
+        }).on("socketID", args -> {
+            if (args.length == 0 || args[0] == null) return;
+            Object payload = args[0];
+            String id;
+
+            if (payload instanceof JSONObject) {
+                JSONObject data = (JSONObject) payload;
+                id = data.optString("id", null);
+            } else {
+                id = payload.toString();
             }
-        }).on("socketID", new Emitter.Listener() {
-            @Override
-            public void call(Object... objects) {
-                JSONObject data =  (JSONObject) objects[0];
-                try {
-                    String id = data.getString("id");
-                    Gdx.app.log("SocketIO", "My ID: " + id);
-                } catch (JSONException e) {
-                    Gdx.app.log("SocketIO", "Error getting ID");
-                }
+
+            if (id != null) {
+                Gdx.app.log("SocketIO", "My ID: " + id);
             }
-        }).on("newPlayer", new Emitter.Listener() {
-            @Override
-            public void call(Object... objects) {
-                JSONObject data =  (JSONObject) objects[0];
-                try {
-                    String playerId = data.getString("id");
-                    Gdx.app.log("SocketIO", "New Player Connected: " + playerId);
-                    em.addPlayer(new Player(playerId, (float) data.getDouble("x"), (float) data.getDouble("y"),  100, 10, 10f, "player_piss"));
-                } catch (JSONException e) {
-                    Gdx.app.log("SocketIO", "Error getting new PlayerID");
-                }
+        }).on("newPlayer", args -> {
+            if (args.length == 0 || !(args[0] instanceof JSONObject)) return;
+            JSONObject data = (JSONObject) args[0];
+            try {
+                String playerId = data.getString("id");
+                float x = data.has("x") ? (float) data.getDouble("x") : 100f;
+                float y = data.has("y") ? (float) data.getDouble("y") : 100f;
+                Gdx.app.log("SocketIO", "New Player Connected: " + playerId);
+                em.addPlayer(new Player(playerId, x, y, 100, 10, 10f, "player_piss"));
+            } catch (JSONException e) {
+                Gdx.app.log("SocketIO", "Error getting new PlayerID");
             }
-        }).on("playerDisconnect", new Emitter.Listener() {
-            @Override
-            public void call(Object... objects) {
-                JSONObject data =  (JSONObject) objects[0];
-                try {
-                    String id = data.getString("id");
-                    Gdx.app.log("SocketIO", "New Player Connected: " + id);
-                    em.removePlayer(id);
-                } catch (JSONException e) {
-                    Gdx.app.log("SocketIO", "Error getting disconnected PlayerID");
-                }
+        }).on("playerDisconnected", args -> {
+            if (args.length == 0 || !(args[0] instanceof JSONObject)) return;
+            JSONObject data = (JSONObject) args[0];
+            try {
+                String id = data.getString("id");
+                Gdx.app.log("SocketIO", "Player Disconnected: " + id);
+                em.removePlayer(id);
+            } catch (JSONException e) {
+                Gdx.app.log("SocketIO", "Error getting disconnected PlayerID");
             }
-        }).on("playerMoved", new Emitter.Listener() {
-            @Override
-            public void call(Object... objects) {
-                JSONObject data =  (JSONObject) objects[0];
-                try {
-                    String playerId = data.getString("id");
-                    double x = data.getDouble("x");
-                    double y = data.getDouble("y");
-                    if (em.getPlayers().get(playerId) != null) {
-                        em.getPlayers().get(playerId).setX((float) x);
-                        em.getPlayers().get(playerId).setY((float) y);
-                    }
-                } catch (JSONException e) {
-                    Gdx.app.log("SocketIO", "Error getting disconnected PlayerID");
+        }).on("playerMoved", args -> {
+            if (args.length == 0 || !(args[0] instanceof JSONObject)) return;
+            JSONObject data = (JSONObject) args[0];
+            try {
+                String playerId = data.getString("id");
+                double x = data.getDouble("x");
+                double y = data.getDouble("y");
+                if (em.getPlayers().get(playerId) != null) {
+                    em.getPlayers().get(playerId).setX((float) x);
+                    em.getPlayers().get(playerId).setY((float) y);
                 }
+            } catch (JSONException e) {
+                Gdx.app.log("SocketIO", "Error getting moved Player data");
             }
-        }).on("getPlayers", new Emitter.Listener() {
-            @Override
-            public void call(Object... args) {
-                JSONArray objects =  (JSONArray) args[0];
-                try {
-                    for  (int i = 0; i < objects.length(); i++) {
-                        String id = objects.getJSONObject(i).getString("id");
-                        em.getPlayers().put(id, new Player(id,
-                            (float)objects.getJSONObject(i).getDouble("x"),
-                            (float)objects.getJSONObject(i).getDouble("y"),
-                            5, 1, 7.5f,  "player_piss"));
-                    }
-                } catch (Exception ex) {
-                    Gdx.app.log("SocketIO", "Error getting players list");
+        }).on("getPlayers", args -> {
+            if (args.length == 0 || !(args[0] instanceof JSONArray)) return;
+            JSONArray array = (JSONArray) args[0];
+            try {
+                for (int i = 0; i < array.length(); i++) {
+                    JSONObject obj = array.getJSONObject(i);
+                    String id = obj.getString("id");
+                    float x = (float) obj.getDouble("x");
+                    float y = (float) obj.getDouble("y");
+                    em.getPlayers().put(id,
+                        new Player(id, x, y, 5, 1, 7.5f, "player_piss"));
                 }
+            } catch (Exception ex) {
+                Gdx.app.log("SocketIO", "Error getting players list");
             }
         });
     }
+
 
     public void updateServer(float dt) {
         Player p = em.getPlayers().get(socket.id());
         timer += dt;
         if (timer >= UPDATE_TIME && p != null && p.hasMoved()) {
-            JSONObject data = new  JSONObject();
+            JSONObject data = new JSONObject();
             try {
                 data.put("x", p.getX());
                 data.put("y", p.getY());
@@ -124,6 +124,8 @@ public class ServerManager {
             } catch (Exception ex) {
                 Gdx.app.log("Socket.IO", "Error sending update data");
             }
+            timer = 0f;
         }
     }
+
 }

@@ -4,6 +4,7 @@ buildscript {
     gradlePluginPortal()
   }
   dependencies {
+
     classpath "io.github.fourlastor:construo:2.0.2"
     if(enableGraalNative == 'true') {
       classpath "org.graalvm.buildtools.native:org.graalvm.buildtools.native.gradle.plugin:0.9.28"
@@ -29,6 +30,7 @@ if (JavaVersion.current().isJava9Compatible()) {
 }
 
 dependencies {
+  implementation project(":server")
   implementation "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
   implementation "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-desktop"
   implementation "com.badlogicgames.gdx:gdx-lwjgl3-angle:$gdxVersion"

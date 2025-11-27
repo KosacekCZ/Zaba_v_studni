@@ -2,31 +2,24 @@ package io.amogus;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
-import io.amogus.entities.Entity;
-import io.amogus.entities.Player;
-import io.amogus.managers.EntityManager;
-import io.amogus.managers.ServerManager;
-import io.amogus.managers.SpriteManager;
-import io.amogus.managers.TextureManager;
-import io.socket.client.IO;
-import io.socket.client.Socket;
-import io.socket.emitter.Emitter;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import io.amogus.gamestates.E_Gamestate;
+import io.amogus.gamestates.MainMenu;
+import io.amogus.managers.*;
+import io.jetbeans.GameServer;
 
-import java.util.HashMap;
-
-/** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class Main extends ApplicationAdapter {
     private ServerManager svm;
     private SpriteManager sm;
     private EntityManager em;
     private TextureManager tm;
+    private GameStateManager gsm;
+    private GameServer server;
+    private ViewportManager vm;
+
+    public Main(GameServer server) {
+        this.server = server;
+    }
 
     @Override
     public void create() {
@@ -36,24 +29,46 @@ public class Main extends ApplicationAdapter {
         svm = ServerManager.getInstance();
         sm = SpriteManager.getInstance();
         em = EntityManager.getInstace();
+        gsm = GameStateManager.getInstance();
+        vm = ViewportManager.getInstance();
+
+        vm.set_zoom(0.5f);
 
         svm.connectSocket();
         svm.configSocketEvents();
+
+
+        gsm.addGameState(new MainMenu());
+        gsm.setCurrentState(E_Gamestate.MAIN_MENU);
     }
 
     @Override
     public void render() {
         ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
-        sm.begin();
+        vm.update();
 
-        em.update();
-        svm.updateServer(Gdx.graphics.getDeltaTime());
+        sm.setWorldProjection(vm.getWorldCombined());
+        sm.setUiProjection(vm.getUiCombined());
 
+        sm.beginWorld();
+        gsm.updateWorld();
         sm.end();
+
+        sm.beginScreen();
+        gsm.updateScreen();
+        sm.end();
+
+
+        svm.updateServer(Gdx.graphics.getDeltaTime());
     }
 
     @Override
     public void dispose() {
         sm.dispose();
+    }
+
+    @Override
+    public void resize(int width, int height) {
+        vm.resize(width, height);
     }
 }
