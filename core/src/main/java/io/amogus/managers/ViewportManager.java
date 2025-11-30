@@ -8,6 +8,7 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport;
 
 public class ViewportManager {
     private static ViewportManager instance;
+    private float zoom;
 
     public static final float WORLD_WIDTH = 1280f;
     public static final float WORLD_HEIGHT = 720f;
@@ -29,6 +30,8 @@ public class ViewportManager {
         worldViewport = new ExtendViewport(WORLD_WIDTH, WORLD_HEIGHT, worldCamera);
         worldViewport.apply();
         worldCamera.position.set(WORLD_WIDTH / 2f, WORLD_HEIGHT / 2f, 0);
+
+        zoom = 1.0f;
 
         uiCamera = new OrthographicCamera();
         uiCamera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -63,7 +66,15 @@ public class ViewportManager {
     }
 
     public void set_zoom(float zoom) {
-        worldCamera.zoom = zoom;
+        if (zoom > 0.3 && zoom < 2.0 ) {
+            this.zoom = zoom;
+            worldCamera.zoom = zoom;
+        }
+
+    }
+
+    public float get_zoom() {
+        return zoom;
     }
 
     public void adjust_zoom(float zoom) {

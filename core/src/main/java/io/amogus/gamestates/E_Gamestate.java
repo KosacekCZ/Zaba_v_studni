@@ -6,5 +6,6 @@ public enum E_Gamestate {
     MAIN_MENU,
     LOBBY,
     SETTINGS,
-    GAME
+    GAME,
+    EDITOR
 }

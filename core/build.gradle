@@ -8,6 +8,9 @@ dependencies {
   api "com.github.tommyettinger:cringe:$cringeVersion"
   implementation 'io.socket:socket.io-client:2.1.2'
   implementation(project(":server"))
+  implementation "org.slf4j:slf4j-nop:2.0.9"
+  implementation "space.earlygrey:shapedrawer:$shapedrawerVersion"
+
 
   if(enableGraalNative == 'true') {
     implementation "io.github.berstanio:gdx-svmhelper-annotations:$graalHelperVersion"

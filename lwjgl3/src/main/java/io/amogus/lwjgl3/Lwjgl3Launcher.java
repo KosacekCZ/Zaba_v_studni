@@ -6,12 +6,11 @@ import io.amogus.Main;
 import io.jetbeans.GameServer;
 
 public class Lwjgl3Launcher {
-    private static GameServer gameServer;
 
     public static void main(String[] args) {
         if (StartupHelper.startNewJvmIfRequired()) return;
 
-        gameServer = new GameServer();
+        GameServer gameServer = new GameServer();
         Thread serverThread = new Thread(gameServer::start, "game-server");
         serverThread.setDaemon(true);
         serverThread.start();
@@ -28,7 +27,7 @@ public class Lwjgl3Launcher {
         configuration.setTitle("Zaba v Studni");
         configuration.useVsync(true);
         configuration.setForegroundFPS(Lwjgl3ApplicationConfiguration.getDisplayMode().refreshRate + 1);
-        configuration.setWindowedMode(800, 800);
+        configuration.setWindowedMode(1920, 1080);
         configuration.setWindowIcon("libgdx128.png", "libgdx64.png", "libgdx32.png", "libgdx16.png");
         configuration.setOpenGLEmulation(Lwjgl3ApplicationConfiguration.GLEmulation.ANGLE_GLES20, 0, 0);
 

@@ -30,14 +30,11 @@ public class MainMenu extends Gamestate {
 
     @Override
     public void updateScreen() {
-        float tileSize = 128f;
-        int rows = (int) Math.ceil(Gdx.graphics.getHeight() / tileSize) + 2;
-
         sm.drawScreen(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), "central_gradient_dark" );
+    }
 
-        /*for (int i = 0; i < rows; i++) {
-            sm.drawScreen(0, i * tileSize, tileSize, tileSize,"gradient_dark");
-            sm.drawScreen( Gdx.graphics.getWidth() - tileSize ,i * tileSize, tileSize, tileSize, 180,"gradient_dark");
-        }*/
+    @Override
+    public void handleInput() {
+
     }
 }

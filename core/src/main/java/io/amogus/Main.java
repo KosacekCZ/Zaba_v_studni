@@ -4,7 +4,10 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.ScreenUtils;
 import io.amogus.gamestates.E_Gamestate;
+import io.amogus.gamestates.Game;
+import io.amogus.gamestates.Lobby;
 import io.amogus.gamestates.MainMenu;
+import io.amogus.leveleditor.LevelEditor;
 import io.amogus.managers.*;
 import io.jetbeans.GameServer;
 
@@ -19,6 +22,7 @@ public class Main extends ApplicationAdapter {
 
     public Main(GameServer server) {
         this.server = server;
+        server.stop();
     }
 
     @Override
@@ -39,7 +43,11 @@ public class Main extends ApplicationAdapter {
 
 
         gsm.addGameState(new MainMenu());
-        gsm.setCurrentState(E_Gamestate.MAIN_MENU);
+        gsm.addGameState(new Lobby());
+        gsm.addGameState(new Game());
+        gsm.addGameState(new LevelEditor());
+        gsm.setCurrentState(E_Gamestate.EDITOR);
+
     }
 
     @Override
@@ -58,7 +66,7 @@ public class Main extends ApplicationAdapter {
         gsm.updateScreen();
         sm.end();
 
-
+        gsm.handleInput();
         svm.updateServer(Gdx.graphics.getDeltaTime());
     }
 

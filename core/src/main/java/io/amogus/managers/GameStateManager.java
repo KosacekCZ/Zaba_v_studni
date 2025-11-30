@@ -27,6 +27,10 @@ public class GameStateManager {
         gamestates.get(currentState).updateScreen();
     }
 
+    public void handleInput() {
+        gamestates.get(currentState).handleInput();
+    }
+
     public void addGameState(Gamestate gameState) {
         gamestates.put(gameState.state, gameState);
 

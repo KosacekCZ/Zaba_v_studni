@@ -14,8 +14,9 @@ import java.util.Map;
 
 public class ServerManager {
     private Socket socket;
+    private IEntityEvents entityEvents;
+
     private static ServerManager instance;
-    private final EntityManager em;
     private float timer;
     private float UPDATE_TIME = 1/60f;
 
@@ -25,7 +26,10 @@ public class ServerManager {
     }
 
     public ServerManager() {
-        em = EntityManager.getInstace();
+    }
+
+    public void setEntityEvents(IEntityEvents entityEvents) {
+        this.entityEvents = entityEvents;
     }
 
     public void connectSocket() {
@@ -41,7 +45,7 @@ public class ServerManager {
         socket.on(Socket.EVENT_CONNECT, args -> {
             Gdx.app.log("SocketIO", "Connected");
             String id = socket.id();
-            em.addPlayer(new Player(id, 100f, 100f, 100, 10, 10f, "player_green"));
+            entityEvents.spawnPlayer(new Player(id, 100f, 100f, 100, 10, 10f, "player_green"));
         }).on("socketID", args -> {
             if (args.length == 0 || args[0] == null) return;
             Object payload = args[0];
@@ -65,7 +69,7 @@ public class ServerManager {
                 float x = data.has("x") ? (float) data.getDouble("x") : 100f;
                 float y = data.has("y") ? (float) data.getDouble("y") : 100f;
                 Gdx.app.log("SocketIO", "New Player Connected: " + playerId);
-                em.addPlayer(new Player(playerId, x, y, 100, 10, 10f, "player_piss"));
+                entityEvents.spawnPlayer(new Player(playerId, x, y, 100, 10, 10f, "player_piss"));
             } catch (JSONException e) {
                 Gdx.app.log("SocketIO", "Error getting new PlayerID");
             }
@@ -75,7 +79,7 @@ public class ServerManager {
             try {
                 String id = data.getString("id");
                 Gdx.app.log("SocketIO", "Player Disconnected: " + id);
-                em.removePlayer(id);
+                entityEvents.removePlayer(id);
             } catch (JSONException e) {
                 Gdx.app.log("SocketIO", "Error getting disconnected PlayerID");
             }
@@ -86,9 +90,9 @@ public class ServerManager {
                 String playerId = data.getString("id");
                 double x = data.getDouble("x");
                 double y = data.getDouble("y");
-                if (em.getPlayers().get(playerId) != null) {
-                    em.getPlayers().get(playerId).setX((float) x);
-                    em.getPlayers().get(playerId).setY((float) y);
+                if (entityEvents.getPlayers().get(playerId) != null) {
+                    entityEvents.getPlayers().get(playerId).setX((float) x);
+                    entityEvents.getPlayers().get(playerId).setY((float) y);
                 }
             } catch (JSONException e) {
                 Gdx.app.log("SocketIO", "Error getting moved Player data");
@@ -102,7 +106,7 @@ public class ServerManager {
                     String id = obj.getString("id");
                     float x = (float) obj.getDouble("x");
                     float y = (float) obj.getDouble("y");
-                    em.getPlayers().put(id,
+                    entityEvents.getPlayers().put(id,
                         new Player(id, x, y, 5, 1, 7.5f, "player_piss"));
                 }
             } catch (Exception ex) {
@@ -111,9 +115,8 @@ public class ServerManager {
         });
     }
 
-
     public void updateServer(float dt) {
-        Player p = em.getPlayers().get(socket.id());
+        Player p = entityEvents.getPlayers().get(socket.id());
         timer += dt;
         if (timer >= UPDATE_TIME && p != null && p.hasMoved()) {
             JSONObject data = new JSONObject();
@@ -128,4 +131,21 @@ public class ServerManager {
         }
     }
 
+    public void spawnPlayer(Player p) {
+        if (socket == null || !socket.connected()) return;
+
+        JSONObject data = new JSONObject();
+        try {
+            data.put("x", p.getX());
+            data.put("y", p.getY());
+            data.put("hp", p.getHealth());
+            data.put("damage", p.getDamage());
+            data.put("texture", p.getTexture());
+        } catch (Exception e) {
+            Gdx.app.log("Socket.IO", "Error building spawn data");
+            return;
+        }
+
+        socket.emit("playerSpawned", data);
+    }
 }

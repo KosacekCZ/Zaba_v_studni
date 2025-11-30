@@ -7,12 +7,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class EntityManager {
+public class EntityManager implements io.amogus.managers.IEntityEvents {
     private final List<Entity> entites;
     private final HashMap<String, Player> players;
     private static int lastId;
 
+    private final ServerManager svm;
+
     private static EntityManager instace;
+
     public static EntityManager getInstace() {
         if (instace == null) instace = new EntityManager();
         return instace;
@@ -22,6 +25,8 @@ public class EntityManager {
         entites = new ArrayList<Entity>();
         players = new HashMap<String, Player>();
         lastId = 0;
+        svm = ServerManager.getInstance();
+        svm.setEntityEvents(this);
     }
 
     public void update() {
@@ -41,15 +46,13 @@ public class EntityManager {
         }
     }
 
-    public void addPlayer(Player player) {
+    public void spawnPlayer(Player player) {
         System.out.println(player.getX() + ", " + player.getY() + ", " + player.getWidth() + ", " + player.getHeight() + player.getTexture());
         player.setPlayerNumber(++lastId);
         players.put(player.getPlayerId(), player);
         entites.add(player);
 
-        System.out.println("Added new player " + player.getPlayerId());
-        System.out.println("Entities: " + entites.size());
-        System.out.println("Players: " + players.size());
+        svm.spawnPlayer(player);
     }
 
     public void removePlayer(String playerId) {

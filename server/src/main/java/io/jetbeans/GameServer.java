@@ -42,9 +42,9 @@ public class GameServer {
         client.sendEvent("getPlayers", players);
         client.getNamespace()
             .getBroadcastOperations()
-            .sendEvent("newPlayer", new Player(id, 100, 100));
+            .sendEvent("newPlayer", new Player(id, 100, 100, 100, 10, "player_green"));
 
-        players.add(new Player(id, 100, 100));
+        players.add(new Player(id, 100, 100, 100, 10, "player_green"));
     }
 
     private void onDisconnect(SocketIOClient client) {

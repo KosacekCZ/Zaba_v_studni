@@ -2,6 +2,7 @@ package io.amogus.entities;
 
 public class Player extends Entity {
     private int playerNumber;
+    private String playerName;
     private String playerId;
 
     public Player(String id, float x, float y, int health, int damage, float speed, String texture) {
@@ -10,8 +11,7 @@ public class Player extends Entity {
     }
 
     public void update() {
-        System.out.println(sprite.getX() + " " + sprite.getY() + " " + sprite.getWidth() + " " + sprite.getHeight());
-        sm.draw(sprite.getX(), sprite.getY(), sprite.getWidth(), sprite.getHeight(), texture);
+        sm.draw(getX(), getY(), getWidth(), getHeight(), texture);
 
 
 
@@ -21,6 +21,13 @@ public class Player extends Entity {
         return playerNumber;
     }
 
+    public String getPlayerName() {
+        return playerName;
+    }
+
+    public void setPlayerName(String playerName) {
+        this.playerName = playerName;
+    }
 
     public String getPlayerId() {
         return playerId;
@@ -37,6 +44,8 @@ public class Player extends Entity {
     public String getTexture() {
         return texture;
     }
+
+
 
     public void onCollide(Entity e) {
 

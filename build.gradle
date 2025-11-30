@@ -13,6 +13,9 @@ buildscript {
 }
 
 allprojects {
+  ext {
+    shapedrawerVersion = '2.5.0'
+  }
   apply plugin: 'eclipse'
   apply plugin: 'idea'
 
