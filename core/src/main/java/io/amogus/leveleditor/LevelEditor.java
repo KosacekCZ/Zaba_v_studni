@@ -24,6 +24,14 @@ public class LevelEditor extends Gamestate {
     private List<Category> categories;
     private int categoryCycler = 0;
 
+    private final float REF_WIDTH = 1920f;
+    private final float REF_HEIGHT = 1080f;
+
+    private float uiScale;
+    private float uiOffsetX;
+    private float uiOffsetY;
+
+
 
 
     public LevelEditor() {
@@ -109,77 +117,118 @@ public class LevelEditor extends Gamestate {
 
     @Override
     public void updateScreen() {
-        int tileWidth = (int) Math.floor((double) Gdx.graphics.getWidth() / 32);
+        updateUiTransform();
+
+        float screenW = Gdx.graphics.getWidth();
+        float screenH = Gdx.graphics.getHeight();
+        uiScale = Math.min(screenW / REF_WIDTH, screenH / REF_HEIGHT);
+
+        float refTileWidth = REF_WIDTH / 32f;
+        int tileWidth = Math.round(refTileWidth * uiScale);
+
+        float m8  = 8f  * uiScale;
+        float m16 = 16f * uiScale;
+
 
         // Toolbar
-        sm.drawScreen(8, 8, Gdx.graphics.getWidth() - 16f, tileWidth * 1.2f, "toolbar_transparent_512");
+        sm.drawScreen(m8, m8, screenW - 2 * m8, tileWidth + m16, "toolbar_transparent_512");
 
         // Colidable walls
         switch (category) {
             case BLOCKS:
-                sm.drawScreen(16, 16, tileWidth, tileWidth, "btn");
-                sm.drawScreen(16, 16, tileWidth, tileWidth, "blocks");
+                sm.drawScreen(m16, m16, tileWidth, tileWidth, "btn");
+                sm.drawScreen(m16, m16, tileWidth, tileWidth, "blocks");
 
-                sm.drawScreen(16 + tileWidth + 8, 16, tileWidth, tileWidth, "btn");
-                sm.drawScreen(16 + tileWidth + 8, 16, tileWidth, tileWidth, "arrows_change");
+                sm.drawScreen(m16 + tileWidth + m8, m16, tileWidth, tileWidth, "btn");
+                sm.drawScreen(m16 + tileWidth + m8, m16, tileWidth, tileWidth, "arrows_change");
                 break;
 
             case BOXES:
-                sm.drawScreen(16, 16, tileWidth, tileWidth, "btn");
-                sm.drawScreen(16, 16, tileWidth, tileWidth, "boxes");
+                sm.drawScreen(m16, m16, tileWidth, tileWidth, "btn");
+                sm.drawScreen(m16, m16, tileWidth, tileWidth, "boxes");
 
-                sm.drawScreen(16 + tileWidth + 8, 16, tileWidth, tileWidth, "btn");
-                sm.drawScreen(16 + tileWidth + 8, 16, tileWidth, tileWidth, "arrows_change");
+                sm.drawScreen(m16 + tileWidth + m8, m16, tileWidth, tileWidth, "btn");
+                sm.drawScreen(m16 + tileWidth + m8, m16, tileWidth, tileWidth, "arrows_change");
                 break;
 
             case BACKGROUNDS:
-                sm.drawScreen(16, 16, tileWidth, tileWidth, "btn");
-                sm.drawScreen(16, 16, tileWidth, tileWidth, "background");
+                sm.drawScreen(m16, m16, tileWidth, tileWidth, "btn");
+                sm.drawScreen(m16, m16, tileWidth, tileWidth, "background");
 
-                sm.drawScreen(16 + tileWidth + 8, 16, tileWidth, tileWidth, "btn");
-                sm.drawScreen(16 + tileWidth + 8, 16, tileWidth, tileWidth, "arrows_change");
+                sm.drawScreen(m16 + tileWidth + m8, m16, tileWidth, tileWidth, "btn");
+                sm.drawScreen(m16 + tileWidth + m8, m16, tileWidth, tileWidth, "arrows_change");
                 break;
 
             case DETAILS:
-                sm.drawScreen(16, 16, tileWidth, tileWidth, "btn");
-                sm.drawScreen(16, 16, tileWidth, tileWidth, "details");
+                sm.drawScreen(m16, m16, tileWidth, tileWidth, "btn");
+                sm.drawScreen(m16, m16, tileWidth, tileWidth, "details");
 
-                sm.drawScreen(16 + tileWidth + 8, 16, tileWidth, tileWidth, "btn");
-                sm.drawScreen(16 + tileWidth + 8, 16, tileWidth, tileWidth, "arrows_change");
+                sm.drawScreen(m16 + tileWidth + m8, m16, tileWidth, tileWidth, "btn");
+                sm.drawScreen(m16 + tileWidth + m8, m16, tileWidth, tileWidth, "arrows_change");
                 break;
 
             case ENTITIES:
-                sm.drawScreen(16, 16, tileWidth, tileWidth, "btn");
-                sm.drawScreen(16, 16, tileWidth, tileWidth, "entities");
+                sm.drawScreen(m16, m16, tileWidth, tileWidth, "btn");
+                sm.drawScreen(m16, m16, tileWidth, tileWidth, "entities");
 
-                sm.drawScreen(16 + tileWidth + 8, 16, tileWidth, tileWidth, "btn");
-                sm.drawScreen(16 + tileWidth + 8, 16, tileWidth, tileWidth, "arrows_change");
+                sm.drawScreen(m16 + tileWidth + m8, m16, tileWidth, tileWidth, "btn");
+                sm.drawScreen(m16 + tileWidth + m8, m16, tileWidth, tileWidth, "arrows_change");
         }
 
 
         // Top-right buttons
-        sm.drawScreen(Gdx.graphics.getWidth() - tileWidth - 8, Gdx.graphics.getHeight() - tileWidth - 8, tileWidth, tileWidth, "btn");
-        sm.drawScreen(Gdx.graphics.getWidth() - tileWidth - 8, Gdx.graphics.getHeight() - tileWidth - 8, tileWidth, tileWidth, "save");
+        sm.drawScreen(screenW - tileWidth - m8,screenH - tileWidth - m8, tileWidth, tileWidth, "btn");
+        sm.drawScreen(screenW - tileWidth - m8,screenH - tileWidth - m8, tileWidth, tileWidth, "save");
 
-        sm.drawScreen(Gdx.graphics.getWidth() - 2 * tileWidth - 16, Gdx.graphics.getHeight() - tileWidth - 8, tileWidth, tileWidth, "btn");
-        sm.drawScreen(Gdx.graphics.getWidth() - 2 * tileWidth - 16, Gdx.graphics.getHeight() - tileWidth - 8, tileWidth, tileWidth, "cross");
+        sm.drawScreen(screenW - 2 * tileWidth - 2 * m8,screenH - tileWidth - m8, tileWidth, tileWidth, "btn");
+        sm.drawScreen(screenW - 2 * tileWidth - 2 * m8,screenH - tileWidth - m8, tileWidth, tileWidth, "cross");
 
-        sm.drawScreen(Gdx.graphics.getWidth() - 3 * tileWidth - 24, Gdx.graphics.getHeight() - tileWidth - 8, tileWidth, tileWidth, "btn");
-        sm.drawScreen(Gdx.graphics.getWidth() - 3 * tileWidth - 24, Gdx.graphics.getHeight() - tileWidth - 8, tileWidth, tileWidth, "step_back");
+        sm.drawScreen(screenW - 3 * tileWidth - 3 * m8,screenH - tileWidth - m8, tileWidth, tileWidth, "btn");
+        sm.drawScreen(screenW - 3 * tileWidth - 3 * m8,screenH - tileWidth - m8, tileWidth, tileWidth, "step_back");
 
         // Top-left buttons
-        sm.drawScreen(8, Gdx.graphics.getHeight() - tileWidth - 8, tileWidth, tileWidth, "btn");
-        sm.drawScreen(8, Gdx.graphics.getHeight() - tileWidth - 8, tileWidth, tileWidth, "arrow_move");
+        sm.drawScreen(m8, Gdx.graphics.getHeight() - tileWidth - m8, tileWidth, tileWidth, "btn");
+        sm.drawScreen(m8, Gdx.graphics.getHeight() - tileWidth - m8, tileWidth, tileWidth, "arrow_move");
 
-        sm.drawScreen(tileWidth + 16, Gdx.graphics.getHeight() - tileWidth - 8, tileWidth, tileWidth, "btn");
-        sm.drawScreen(tileWidth + 16, Gdx.graphics.getHeight() - tileWidth - 8, tileWidth, tileWidth, "collisions");
+        sm.drawScreen(tileWidth + 2 * m8, Gdx.graphics.getHeight() - tileWidth - m8, tileWidth, tileWidth, "btn");
+        sm.drawScreen(tileWidth + 2 * m8, Gdx.graphics.getHeight() - tileWidth - m8, tileWidth, tileWidth, "collisions");
 
-        sm.drawScreen(2 * tileWidth + 24, Gdx.graphics.getHeight() - tileWidth - 8, tileWidth, tileWidth, "btn");
-        sm.drawScreen(2 * tileWidth + 24, Gdx.graphics.getHeight() - tileWidth - 8, tileWidth, tileWidth, "delete");
+        sm.drawScreen(2 * tileWidth + 3 * m8, Gdx.graphics.getHeight() - tileWidth - m8, tileWidth, tileWidth, "btn");
+        sm.drawScreen(2 * tileWidth + 3 * m8, Gdx.graphics.getHeight() - tileWidth - m8, tileWidth, tileWidth, "delete");
 
 
 
         TextManager.draw(String.valueOf("X: " + in.getX() + " Y: " + in.getY()), 20, Color.WHITE, false, g.getWidth() / 2f - 64, g.getHeight() - 32);
+    }
+
+    private void updateUiTransform() {
+        float w = Gdx.graphics.getWidth();
+        float h = Gdx.graphics.getHeight();
+
+        uiScale = Math.min(w / REF_WIDTH, h / REF_HEIGHT);
+
+        float vpW = REF_WIDTH * uiScale;
+        float vpH = REF_HEIGHT * uiScale;
+
+        uiOffsetX = (w - vpW) * 0.5f;
+        uiOffsetY = (h - vpH) * 0.5f;
+    }
+
+    private Vector2 getUiMouse() {
+        float screenW = Gdx.graphics.getWidth();
+        float screenH = Gdx.graphics.getHeight();
+
+        float mx = Gdx.input.getX();
+        float my = screenH - Gdx.input.getY();
+
+        float uiX = (mx - uiOffsetX) / uiScale;
+        float uiY = (my - uiOffsetY) / uiScale;
+
+        return new Vector2(uiX, uiY);
+    }
+
+    private boolean isHovered(float mx, float my, float x1, float y1, float x2, float y2) {
+        return (mx >= x1 && mx <= x2) && (my >= y1 && my <= y2);
     }
 
 
