@@ -55,6 +55,10 @@ public class EntityManager implements io.amogus.managers.IEntityEvents {
         svm.spawnPlayer(player);
     }
 
+    public void spawnEntity(Entity e) {
+        entites.add(e);
+    }
+
     public void removePlayer(String playerId) {
         players.remove(playerId);
     }

@@ -3,6 +3,7 @@ package io.amogus;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.ScreenUtils;
+import io.amogus.entities.Player;
 import io.amogus.gamestates.E_Gamestate;
 import io.amogus.gamestates.Game;
 import io.amogus.gamestates.Lobby;

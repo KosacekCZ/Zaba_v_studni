@@ -5,13 +5,16 @@ import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector4;
 import io.amogus.gamestates.E_Gamestate;
 import io.amogus.gamestates.Gamestate;
 import io.amogus.managers.TextManager;
 import io.amogus.managers.ViewportManager;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class LevelEditor extends Gamestate {
     private final ViewportManager vm;
@@ -19,10 +22,14 @@ public class LevelEditor extends Gamestate {
     private Vector2 mouseDragStartVec;
     private Action action;
     private Category category;
-    private Input in;
-    private Graphics g;
-    private List<Category> categories;
+    private final Input in;
+    private final Graphics g;
+    private final List<Category> categories;
     private int categoryCycler = 0;
+
+    private HashMap<Region, Runnable> regions;
+    private boolean zoning;
+    private Region region;
 
     private final float REF_WIDTH = 1920f;
     private final float REF_HEIGHT = 1080f;
@@ -31,6 +38,10 @@ public class LevelEditor extends Gamestate {
     private float uiOffsetX;
     private float uiOffsetY;
 
+    float refTileWidth = REF_WIDTH / 32f;
+    int tileWidth = Math.round(refTileWidth * uiScale);
+    float m8  = 8f  * uiScale;
+    float m16 = 16f * uiScale;
 
 
 
@@ -48,6 +59,9 @@ public class LevelEditor extends Gamestate {
         categories.add(Category.BOXES);
         categories.add(Category.DETAILS);
         categories.add(Category.ENTITIES);
+        zoning = false;
+
+        regions = new HashMap<>();
     }
 
     @Override
@@ -66,7 +80,7 @@ public class LevelEditor extends Gamestate {
                 float currentY = Gdx.input.getY();
 
                 float dx = mouseDragStartVec.x - currentX;
-                float dy = currentY - mouseDragStartVec.y; // flip Y for screen→world feel
+                float dy = currentY - mouseDragStartVec.y;
 
                 vm.getWorldCamera().translate(dx, dy);
 
@@ -87,14 +101,30 @@ public class LevelEditor extends Gamestate {
             }
 
             // GUI Triggers
-            if ((in.getX() > 104 && in.getX() < 180 && in.getY() > 1260 && in.getY() < 1330) && in.isButtonJustPressed(Input.Buttons.LEFT)) {
+            /* if (in.isButtonJustPressed(Input.Buttons.LEFT)) {
                 if (!(categoryCycler == categories.size() -1)) {
                     categoryCycler++;
                 } else {
                     categoryCycler = 0;
                 }
                 category = categories.get(categoryCycler);
-                System.out.println("cycled category to: " + category);
+            }*/
+
+            if (Gdx.input.isKeyJustPressed(Input.Keys.Z)) {
+                zoning = !zoning;
+                System.out.println("Zoning mode: " + zoning);
+            }
+            if (zoning) {
+                if (region == null && Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
+                    region = new Region(getUiMouse(), 0, 0);
+
+                } else if (region != null && region.w == 0 && region.h == 0 && Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
+                    System.out.println();
+                    region.w = getUiMouse().x;
+                    region.h = getUiMouse().y;
+                    System.out.println("new Region(" + region.x + ", " + region.y + ", " + region.w + ", " + region.h + ");");
+                    region = null;
+                }
             }
         }
     }
@@ -125,10 +155,8 @@ public class LevelEditor extends Gamestate {
 
         float refTileWidth = REF_WIDTH / 32f;
         int tileWidth = Math.round(refTileWidth * uiScale);
-
         float m8  = 8f  * uiScale;
         float m16 = 16f * uiScale;
-
 
         // Toolbar
         sm.drawScreen(m8, m8, screenW - 2 * m8, tileWidth + m16, "toolbar_transparent_512");
