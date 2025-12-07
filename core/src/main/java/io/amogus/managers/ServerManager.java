@@ -19,13 +19,14 @@ public class ServerManager {
     private static ServerManager instance;
     private float timer;
     private float UPDATE_TIME = 1/60f;
+    private String socketId;
 
     public static ServerManager getInstance() {
         if (instance == null) instance = new ServerManager();
         return instance;
     }
 
-    public ServerManager() {
+    private ServerManager() {
     }
 
     public void setEntityEvents(IEntityEvents entityEvents) {
@@ -43,24 +44,9 @@ public class ServerManager {
 
     public void configSocketEvents() {
         socket.on(Socket.EVENT_CONNECT, args -> {
-            Gdx.app.log("SocketIO", "Connected");
-            String id = socket.id();
-            entityEvents.spawnPlayer(new Player(id, 100f, 100f, 100, 10, 10f, "player_green"));
-        }).on("socketID", args -> {
-            if (args.length == 0 || args[0] == null) return;
-            Object payload = args[0];
-            String id;
-
-            if (payload instanceof JSONObject) {
-                JSONObject data = (JSONObject) payload;
-                id = data.optString("id", null);
-            } else {
-                id = payload.toString();
-            }
-
-            if (id != null) {
-                Gdx.app.log("SocketIO", "My ID: " + id);
-            }
+            socketId = socket.id();
+            Gdx.app.log("SocketIO", "Connected, id = " + socketId);
+            entityEvents.spawnLocalPlayer(new Player(socketId, 0, 0, 100, 10, 1, "player_green"));
         }).on("newPlayer", args -> {
             if (args.length == 0 || !(args[0] instanceof JSONObject)) return;
             JSONObject data = (JSONObject) args[0];
@@ -116,7 +102,9 @@ public class ServerManager {
     }
 
     public void updateServer(float dt) {
-        Player p = entityEvents.getPlayers().get(socket.id());
+
+        // Legacy update
+        /*Player p = entityEvents.getPlayers().get(socket.id());
         timer += dt;
         if (timer >= UPDATE_TIME && p != null && p.hasMoved()) {
             JSONObject data = new JSONObject();
@@ -128,7 +116,7 @@ public class ServerManager {
                 Gdx.app.log("Socket.IO", "Error sending update data");
             }
             timer = 0f;
-        }
+        }*/
     }
 
     public void spawnPlayer(Player p) {
@@ -136,6 +124,7 @@ public class ServerManager {
 
         JSONObject data = new JSONObject();
         try {
+            data.put("id", p.getPlayerId());
             data.put("x", p.getX());
             data.put("y", p.getY());
             data.put("hp", p.getHealth());
@@ -147,5 +136,26 @@ public class ServerManager {
         }
 
         socket.emit("playerSpawned", data);
+    }
+
+    public void updatePlayer(Player p) {
+        if (socket == null || !socket.connected()) return;
+        JSONObject data = new JSONObject();
+
+        try {
+            data.put("id", p.getPlayerId());
+            data.put("x", p.getX());
+            data.put("y", p.getY());
+            data.put("hp", p.getHealth());
+            data.put("damage", p.getDamage());
+        } catch (Exception e) {
+            Gdx.app.log("Socket.IO", "Error sending player data");
+        }
+
+        socket.emit("playerUpdated", data);
+    }
+
+    public String getSocketId() {
+        return socketId;
     }
 }

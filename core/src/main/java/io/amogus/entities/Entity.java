@@ -3,8 +3,11 @@ package io.amogus.entities;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
+import io.amogus.items.Item;
 import io.amogus.managers.ServerManager;
 import io.amogus.managers.SpriteManager;
+
+import java.util.HashMap;
 
 public abstract class Entity {
     protected float x;
@@ -20,6 +23,8 @@ public abstract class Entity {
     protected boolean isDestroy;
     protected SpriteManager sm;
     protected ServerManager svm;
+    protected HashMap<Integer, Item> inventory;
+    protected int inHand;
 
     public Entity(float x, float y, String texture) {
         this.x = x;
@@ -29,6 +34,7 @@ public abstract class Entity {
         prevPos = new Vector2(getX(), getY());
         sm = SpriteManager.getInstance();
         svm = ServerManager.getInstance();
+        inventory = new HashMap<>();
     }
 
     public Entity(float x, float y, String texture, int health , int damage, float speed) {
@@ -41,6 +47,7 @@ public abstract class Entity {
         prevPos = new Vector2(getX(), getY());
         sm = SpriteManager.getInstance();
         svm = ServerManager.getInstance();
+        inventory = new HashMap<>();
     }
 
     public abstract void update();

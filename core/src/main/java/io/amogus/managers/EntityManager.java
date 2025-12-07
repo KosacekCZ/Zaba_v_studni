@@ -10,6 +10,8 @@ import java.util.List;
 public class EntityManager implements io.amogus.managers.IEntityEvents {
     private final List<Entity> entites;
     private final HashMap<String, Player> players;
+    private Player localPlayer;
+    private Player remotePlayer;
     private static int lastId;
 
     private final ServerManager svm;
@@ -42,15 +44,25 @@ public class EntityManager implements io.amogus.managers.IEntityEvents {
                 }
             }
 
+
+
             entites.removeIf(Entity::isDestroy);
         }
     }
 
     public void spawnPlayer(Player player) {
-        System.out.println(player.getX() + ", " + player.getY() + ", " + player.getWidth() + ", " + player.getHeight() + player.getTexture());
         player.setPlayerNumber(++lastId);
         players.put(player.getPlayerId(), player);
         entites.add(player);
+
+        svm.spawnPlayer(player);
+    }
+
+    public void spawnLocalPlayer(Player player) {
+        player.setPlayerNumber(++lastId);
+        players.put(player.getPlayerId(), player);
+        entites.add(player);
+        localPlayer = player;
 
         svm.spawnPlayer(player);
     }
@@ -65,5 +77,9 @@ public class EntityManager implements io.amogus.managers.IEntityEvents {
 
     public HashMap<String, Player> getPlayers() {
         return players;
+    }
+
+    public Player getLocalPlayer() {
+        return localPlayer;
     }
 }

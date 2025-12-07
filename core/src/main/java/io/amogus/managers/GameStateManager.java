@@ -1,51 +1,60 @@
 package io.amogus.managers;
 
-import io.amogus.gamestates.E_Gamestate;
-import io.amogus.gamestates.Gamestate;
+import com.badlogic.gdx.Gdx;
+import io.amogus.gamestates.*;
+import io.amogus.leveleditor.LevelEditor;
 
 import java.util.HashMap;
 
 public class GameStateManager {
     private static GameStateManager instance;
-    private E_Gamestate currentState;
     private final HashMap<E_Gamestate, Gamestate> gamestates;
+    private Gamestate currentState;
 
     public static GameStateManager getInstance() {
         if(instance == null) instance = new GameStateManager();
         return instance;
     }
 
-    public GameStateManager() {
+    private GameStateManager() {
         gamestates = new HashMap<>();
+        registerGameStates();
     }
 
     public void updateWorld() {
-        gamestates.get(currentState).updateWorld();
+        currentState.updateWorld();
     }
 
     public void updateScreen() {
-        gamestates.get(currentState).updateScreen();
+        currentState.updateScreen();
     }
 
     public void handleInput() {
-        gamestates.get(currentState).handleInput();
+        currentState.handleInput();
     }
 
     public void addGameState(Gamestate gameState) {
-        gamestates.put(gameState.state, gameState);
-
-        System.out.println(gamestates.size());
-
-        for (Gamestate s :  gamestates.values()) {
-            System.out.println("State:" + s.state.toString());
-        }
+        gamestates.putIfAbsent(gameState.state, gameState);
     }
 
-    public E_Gamestate getCurrentState() {
+    public Gamestate getCurrentState() {
         return currentState;
     }
 
-    public void setCurrentState(E_Gamestate currentState) {
-        this.currentState = currentState;
+    public void setGameState(E_Gamestate newState) {
+        Gamestate state = gamestates.get(newState);
+        if (state == null) {
+            throw new IllegalStateException("No Gamestate registered for " + newState);
+        }
+        currentState = state;
+        Gdx.input.setInputProcessor(currentState);
+    }
+
+    private void registerGameStates() {
+        addGameState(new MainMenu(this));
+        addGameState(new Lobby(this));
+        addGameState(new Game(this));
+        addGameState(new LevelEditor(this));
+        addGameState(new TestingArea(this));
     }
 }

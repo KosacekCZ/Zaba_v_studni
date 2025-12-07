@@ -2,15 +2,14 @@ package io.amogus;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.utils.ScreenUtils;
 import io.amogus.entities.Player;
-import io.amogus.gamestates.E_Gamestate;
-import io.amogus.gamestates.Game;
-import io.amogus.gamestates.Lobby;
-import io.amogus.gamestates.MainMenu;
+import io.amogus.gamestates.*;
 import io.amogus.leveleditor.LevelEditor;
 import io.amogus.managers.*;
 import io.jetbeans.GameServer;
+import org.json.Test;
 
 public class Main extends ApplicationAdapter {
     private ServerManager svm;
@@ -23,7 +22,6 @@ public class Main extends ApplicationAdapter {
 
     public Main(GameServer server) {
         this.server = server;
-        server.stop();
     }
 
     @Override
@@ -43,16 +41,19 @@ public class Main extends ApplicationAdapter {
         svm.configSocketEvents();
 
 
-        gsm.addGameState(new MainMenu());
-        gsm.addGameState(new Lobby());
-        gsm.addGameState(new Game());
-        gsm.addGameState(new LevelEditor());
-        gsm.setCurrentState(E_Gamestate.EDITOR);
+
+        gsm.setGameState(E_Gamestate.TESTING);
 
     }
 
     @Override
     public void render() {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            Gdx.app.exit();
+            server.stop();
+            System.exit(0);
+        }
+
         ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
         vm.update();
 

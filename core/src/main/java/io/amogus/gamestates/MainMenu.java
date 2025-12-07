@@ -1,12 +1,22 @@
 package io.amogus.gamestates;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Color;
+import io.amogus.leveleditor.Region;
+import io.amogus.managers.GameStateManager;
+import io.amogus.managers.TextManager;
+
+import java.util.HashMap;
 
 public class MainMenu extends Gamestate {
 
-    public MainMenu() {
-        super(E_Gamestate.MAIN_MENU);
+    private final HashMap<Region, Runnable> regions;
 
+    public MainMenu(GameStateManager gsm) {
+        super(E_Gamestate.MAIN_MENU, gsm);
+        regions = new HashMap<>();
+        initRegions();
     }
 
     @Override
@@ -26,15 +36,34 @@ public class MainMenu extends Gamestate {
                 sm.draw(startX + i * tileSize,startY + j * tileSize, tileSize, tileSize,"brick_wall");
             }
         }
+
+
+
     }
 
     @Override
     public void updateScreen() {
         sm.drawScreen(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), "central_gradient_dark" );
+        sm.drawScreen((Gdx.graphics.getWidth() / 2f) - 128f, Gdx.graphics.getHeight() / 2f, 256f, 64f, "frame");
+        TextManager.draw("Test", 36, Color.WHITE,true,  (Gdx.graphics.getWidth() / 2f) - 64f, (Gdx.graphics.getHeight() / 2f) + 48f);
     }
 
     @Override
     public void handleInput() {
+        for (Region region : regions.keySet()) {
+            if (isHovered(getUiMouse().x, getUiMouse().y, region.x, region.y, region.w, region.h) && Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
+                regions.get(region).run();
+            }
+        }
 
+        if (Gdx.input.isKeyJustPressed(Input.Keys.T)) {
+            gsm.setGameState(E_Gamestate.TESTING);
+        }
+    }
+
+    private void initRegions() {
+        regions.put(new Region(Gdx.graphics.getWidth() / 2f - 128f, Gdx.graphics.getHeight() / 2f, Gdx.graphics.getWidth() / 2f + 128f, (Gdx.graphics.getHeight() / 2f) + 64f),
+            ()->{gsm.setGameState(E_Gamestate.TESTING);
+                System.out.println("Changing GameState");});
     }
 }

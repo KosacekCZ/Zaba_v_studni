@@ -7,6 +7,7 @@ import java.util.List;
 
 public interface IEntityEvents {
     void spawnPlayer(Player player);
+    void spawnLocalPlayer(Player player);
     HashMap<String, Player> getPlayers();
     void removePlayer(String playerId);
 }

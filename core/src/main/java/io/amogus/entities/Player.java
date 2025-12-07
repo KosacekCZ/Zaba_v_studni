@@ -1,19 +1,56 @@
 package io.amogus.entities;
 
+import com.badlogic.gdx.math.Vector2;
+import io.amogus.items.Shotgun;
+
+import java.util.HashMap;
+
 public class Player extends Entity {
     private int playerNumber;
     private String playerName;
     private String playerId;
+    private Vector2 dashVelocity;
+    float decel = 0.125f;
 
     public Player(String id, float x, float y, int health, int damage, float speed, String texture) {
         super(x, y, texture, health, damage, speed);
+        this.w = 32f;
+        this.h = 32f;
         this.playerId = id;
+        this.dashVelocity = new Vector2(0, 0);
+        inHand = 0;
+
+        inventory.put(10, new Shotgun(this.getX(), this.getY()));
     }
 
     public void update() {
         sm.draw(getX(), getY(), getWidth(), getHeight(), texture);
+        inventory.get(inHand).updateWorld();
+        inventory.get(inHand).updateScreen();
+
+        // Dashing
+        if (!dashVelocity.isZero()) {
+            this.x += dashVelocity.x;
+            this.y += dashVelocity.y;
 
 
+
+            if (dashVelocity.x > 0) {
+                dashVelocity.x -= decel;
+                if (dashVelocity.x < 0) dashVelocity.x = 0;
+            } else if (dashVelocity.x < 0) {
+                dashVelocity.x += decel;
+                if (dashVelocity.x > 0) dashVelocity.x = 0;
+            }
+
+            if (dashVelocity.y > 0) {
+                dashVelocity.y -= decel;
+                if (dashVelocity.y < 0) dashVelocity.y = 0;
+            } else if (dashVelocity.y < 0) {
+                dashVelocity.y += decel;
+                if (dashVelocity.y > 0) dashVelocity.y = 0;
+            }
+        }
 
     }
 
@@ -41,13 +78,20 @@ public class Player extends Entity {
         this.playerNumber = playerNumber;
     }
 
-    public String getTexture() {
-        return texture;
-    }
-
-
 
     public void onCollide(Entity e) {
 
+    }
+
+    public Vector2 getDashVelocity() {
+        return dashVelocity;
+    }
+
+    public void setDashVelocity(Vector2 velocity) {
+        this.dashVelocity = velocity;
+    }
+
+    public void setInHand(int inHand) {
+        this.inHand = inHand;
     }
 }

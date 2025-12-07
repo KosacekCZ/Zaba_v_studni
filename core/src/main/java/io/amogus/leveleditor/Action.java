@@ -4,5 +4,7 @@ public enum Action {
     HAND,
     PLACE,
     DELETE,
-    MOVE
+    MOVE,
+    ZONE,
+    COLLISIONS,
 }

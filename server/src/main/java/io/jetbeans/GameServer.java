@@ -3,13 +3,13 @@ package io.jetbeans;
 import com.corundumstudio.socketio.Configuration;
 import com.corundumstudio.socketio.SocketIOClient;
 import com.corundumstudio.socketio.SocketIOServer;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
+
+import java.util.HashMap;
 import java.util.Map;
 
 public class GameServer {
 
-    private final List<Player> players = new CopyOnWriteArrayList<>();
+    private final Map<String, Player> players = new HashMap<>();
     private SocketIOServer server;
 
     public void start() {
@@ -22,6 +22,7 @@ public class GameServer {
         server.addConnectListener(this::onConnect);
         server.addDisconnectListener(this::onDisconnect);
         server.addEventListener("playerMoved", Player.class, (client, data, ackSender) -> onPlayerMoved(client, data));
+        server.addEventListener("playerUpdated", Player.class, (client, data, ackSender) -> onPlayerUpdated(client, data));
 
         server.start();
         System.out.println("[WELL] Server is now running.");
@@ -31,6 +32,11 @@ public class GameServer {
         if (server != null) {
             server.stop();
         }
+    }
+
+    public static void main(String[] args) {
+        GameServer server = new GameServer();
+        server.start();
     }
 
     private void onConnect(SocketIOClient client) {
@@ -44,7 +50,7 @@ public class GameServer {
             .getBroadcastOperations()
             .sendEvent("newPlayer", new Player(id, 100, 100, 100, 10, "player_green"));
 
-        players.add(new Player(id, 100, 100, 100, 10, "player_green"));
+        players.put(id, new Player(id, 100, 100, 100, 10, "player_green"));
     }
 
     private void onDisconnect(SocketIOClient client) {
@@ -55,7 +61,12 @@ public class GameServer {
             .getBroadcastOperations()
             .sendEvent("playerDisconnected", Map.of("id", id));
 
-        players.removeIf(p -> p.getId().equals(id));
+        players.remove(id);
+    }
+
+    private void onPlayerUpdated(SocketIOClient client, Player player) {
+        players.get(player.getId()).update((float) player.getX(), (float) player.getY(), player.getHealth(), player.getDamage());
+        client.getNamespace().getBroadcastOperations().sendEvent("playerUpdated", player);
     }
 
     private void onPlayerMoved(SocketIOClient client, Player data) {
@@ -66,7 +77,7 @@ public class GameServer {
             .getBroadcastOperations()
             .sendEvent("playerMoved", data);
 
-        for (Player p : players) {
+        for (Player p : players.values()) {
             if (p.getId().equals(id)) {
                 p.setX(data.getX());
                 p.setY(data.getY());
@@ -75,8 +86,5 @@ public class GameServer {
         }
     }
 
-    public static void main(String[] args) {
-        GameServer server = new GameServer();
-        server.start();
-    }
+
 }

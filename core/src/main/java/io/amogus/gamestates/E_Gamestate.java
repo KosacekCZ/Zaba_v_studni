@@ -7,5 +7,7 @@ public enum E_Gamestate {
     LOBBY,
     SETTINGS,
     GAME,
-    EDITOR
+    EDITOR,
+    TESTING,
+
 }

@@ -5,16 +5,15 @@ import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector4;
 import io.amogus.gamestates.E_Gamestate;
 import io.amogus.gamestates.Gamestate;
+import io.amogus.managers.GameStateManager;
 import io.amogus.managers.TextManager;
 import io.amogus.managers.ViewportManager;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class LevelEditor extends Gamestate {
     private final ViewportManager vm;
@@ -27,12 +26,10 @@ public class LevelEditor extends Gamestate {
     private final List<Category> categories;
     private int categoryCycler = 0;
 
-    private HashMap<Region, Runnable> regions;
-    private boolean zoning;
+    private final HashMap<Region, Runnable> regions;
     private Region region;
 
-    private final float REF_WIDTH = 1920f;
-    private final float REF_HEIGHT = 1080f;
+
 
     private float uiScale;
     private float uiOffsetX;
@@ -45,11 +42,11 @@ public class LevelEditor extends Gamestate {
 
 
 
-    public LevelEditor() {
-        super(E_Gamestate.EDITOR);
+    public LevelEditor(GameStateManager gsm) {
+        super(E_Gamestate.EDITOR, gsm);
         vm = ViewportManager.getInstance();
         mouseDragStartVec =  new Vector2(0, 0);
-        action = Action.HAND;
+        action = Action.MOVE;
         category = Category.BLOCKS;
         in = Gdx.input;
         g = Gdx.graphics;
@@ -59,74 +56,85 @@ public class LevelEditor extends Gamestate {
         categories.add(Category.BOXES);
         categories.add(Category.DETAILS);
         categories.add(Category.ENTITIES);
-        zoning = false;
 
         regions = new HashMap<>();
+        initRegions();
     }
 
     @Override
     public void handleInput() {
-        if (action == Action.HAND) {
 
-            // Screen mouse drag
-            if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
-                if (mouseDragStartVec == null) {
-                    mouseDragStartVec = new Vector2();
+        switch (action) {
+            case HAND:
+            case MOVE:
+                if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
+                    if (mouseDragStartVec == null) {
+                        mouseDragStartVec = new Vector2();
+                    }
+                    mouseDragStartVec.set(Gdx.input.getX(), Gdx.input.getY());
                 }
-                mouseDragStartVec.set(Gdx.input.getX(), Gdx.input.getY());
-            }
-            if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
-                float currentX = Gdx.input.getX();
-                float currentY = Gdx.input.getY();
+                if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
+                    float currentX = Gdx.input.getX();
+                    float currentY = Gdx.input.getY();
 
-                float dx = mouseDragStartVec.x - currentX;
-                float dy = currentY - mouseDragStartVec.y;
+                    float dx = mouseDragStartVec.x - currentX;
+                    float dy = currentY - mouseDragStartVec.y;
 
-                vm.getWorldCamera().translate(dx, dy);
+                    vm.getWorldCamera().translate(dx, dy);
 
-                mouseDragStartVec.set(currentX, currentY);
-            }
-
-
-            // Screen zoom with mousewheel
-            int scroll = (int) scrollDeltaY;
-            if (scroll != 0f) {
-                float zoom = vm.get_zoom();
-                float zoomStep = 0.1f;
-
-                zoom += scroll * zoomStep;
-                vm.set_zoom(zoom);
-
-                scrollDeltaY = 0f;
-            }
-
-            // GUI Triggers
-            /* if (in.isButtonJustPressed(Input.Buttons.LEFT)) {
-                if (!(categoryCycler == categories.size() -1)) {
-                    categoryCycler++;
-                } else {
-                    categoryCycler = 0;
+                    mouseDragStartVec.set(currentX, currentY);
                 }
-                category = categories.get(categoryCycler);
-            }*/
+                break;
+            case PLACE:
+                break;
+            case DELETE:
+                break;
+            case ZONE:
+                boolean click = Gdx.input.isButtonJustPressed(Input.Buttons.LEFT);
 
-            if (Gdx.input.isKeyJustPressed(Input.Keys.Z)) {
-                zoning = !zoning;
-                System.out.println("Zoning mode: " + zoning);
-            }
-            if (zoning) {
-                if (region == null && Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
-                    region = new Region(getUiMouse(), 0, 0);
+                if (region == null) {
+                    if (click) {
+                        region = new Region(getUiMouse(), 0, 0);
+                    }
 
-                } else if (region != null && region.w == 0 && region.h == 0 && Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
-                    System.out.println();
-                    region.w = getUiMouse().x;
-                    region.h = getUiMouse().y;
-                    System.out.println("new Region(" + region.x + ", " + region.y + ", " + region.w + ", " + region.h + ");");
-                    region = null;
+                } else if (region.w == 0 && region.h == 0) {
+                    if (click) {
+                        region.w = getUiMouse().x;
+                        region.h = getUiMouse().y;
+                        System.out.println("new Region(" + region.x + "f, " + region.y + "f, " + region.w + "f, " + region.h + "f);");
+                        region = null;
+                    }
                 }
+                break;
+            case COLLISIONS:
+                break;
+        }
+
+        System.out.println(this.scrollDeltaY);
+
+        // Screen zoom with mousewheel
+       float scroll = this.scrollDeltaY;
+        if (scroll != 0f) {
+            float zoom = vm.get_zoom();
+            float zoomStep = 0.1f;
+
+            zoom += scroll * zoomStep;
+            vm.set_zoom(zoom);
+            this.scrollDeltaY = 0f;
+        }
+
+
+        // Keybinds
+        if (Gdx.input.isKeyJustPressed(Input.Keys.Z)) {
+            action = Action.ZONE;
+        }
+
+        for (Region region : regions.keySet()) {
+            if (isHovered(getUiMouse().x, getUiMouse().y, region.x, region.y, region.w, region.h) && in.isButtonJustPressed(Input.Buttons.LEFT)) {
+                regions.get(region).run();
             }
         }
+
     }
 
     @Override
@@ -161,7 +169,32 @@ public class LevelEditor extends Gamestate {
         // Toolbar
         sm.drawScreen(m8, m8, screenW - 2 * m8, tileWidth + m16, "toolbar_transparent_512");
 
-        // Colidable walls
+        // Top-right buttons
+        sm.drawScreen(screenW - tileWidth - m8,screenH - tileWidth - m8, tileWidth, tileWidth, "btn");
+        sm.drawScreen(screenW - tileWidth - m8,screenH - tileWidth - m8, tileWidth, tileWidth, "save");
+
+        sm.drawScreen(screenW - 2 * tileWidth - 2 * m8,screenH - tileWidth - m8, tileWidth, tileWidth, "btn");
+        sm.drawScreen(screenW - 2 * tileWidth - 2 * m8,screenH - tileWidth - m8, tileWidth, tileWidth, "cross");
+
+        sm.drawScreen(screenW - 3 * tileWidth - 3 * m8,screenH - tileWidth - m8, tileWidth, tileWidth, "btn");
+        sm.drawScreen(screenW - 3 * tileWidth - 3 * m8,screenH - tileWidth - m8, tileWidth, tileWidth, "step_back");
+
+        // Top-left buttons
+        sm.drawScreen(m8, Gdx.graphics.getHeight() - tileWidth - m8, tileWidth, tileWidth, "btn");
+        sm.drawScreen(m8, Gdx.graphics.getHeight() - tileWidth - m8, tileWidth, tileWidth, "arrow_move");
+
+        sm.drawScreen(tileWidth + 2 * m8, Gdx.graphics.getHeight() - tileWidth - m8, tileWidth, tileWidth, "btn");
+        sm.drawScreen(tileWidth + 2 * m8, Gdx.graphics.getHeight() - tileWidth - m8, tileWidth, tileWidth, "hand");
+
+        sm.drawScreen(2 * tileWidth + 3 * m8, Gdx.graphics.getHeight() - tileWidth - m8, tileWidth, tileWidth, "btn");
+        sm.drawScreen(2 * tileWidth + 3 * m8, Gdx.graphics.getHeight() - tileWidth - m8, tileWidth, tileWidth, "collisions");
+
+        sm.drawScreen(3 * tileWidth + 4 * m8, Gdx.graphics.getHeight() - tileWidth - m8, tileWidth, tileWidth, "btn");
+        sm.drawScreen(3 * tileWidth + 4 * m8, Gdx.graphics.getHeight() - tileWidth - m8, tileWidth, tileWidth, "action_zoning");
+
+        sm.drawScreen(4 * tileWidth + 5 * m8, Gdx.graphics.getHeight() - tileWidth - m8, tileWidth, tileWidth, "btn");
+        sm.drawScreen(4 * tileWidth + 5 * m8, Gdx.graphics.getHeight() - tileWidth - m8, tileWidth, tileWidth, "delete");
+
         switch (category) {
             case BLOCKS:
                 sm.drawScreen(m16, m16, tileWidth, tileWidth, "btn");
@@ -203,61 +236,43 @@ public class LevelEditor extends Gamestate {
                 sm.drawScreen(m16 + tileWidth + m8, m16, tileWidth, tileWidth, "arrows_change");
         }
 
-
-        // Top-right buttons
-        sm.drawScreen(screenW - tileWidth - m8,screenH - tileWidth - m8, tileWidth, tileWidth, "btn");
-        sm.drawScreen(screenW - tileWidth - m8,screenH - tileWidth - m8, tileWidth, tileWidth, "save");
-
-        sm.drawScreen(screenW - 2 * tileWidth - 2 * m8,screenH - tileWidth - m8, tileWidth, tileWidth, "btn");
-        sm.drawScreen(screenW - 2 * tileWidth - 2 * m8,screenH - tileWidth - m8, tileWidth, tileWidth, "cross");
-
-        sm.drawScreen(screenW - 3 * tileWidth - 3 * m8,screenH - tileWidth - m8, tileWidth, tileWidth, "btn");
-        sm.drawScreen(screenW - 3 * tileWidth - 3 * m8,screenH - tileWidth - m8, tileWidth, tileWidth, "step_back");
-
-        // Top-left buttons
-        sm.drawScreen(m8, Gdx.graphics.getHeight() - tileWidth - m8, tileWidth, tileWidth, "btn");
-        sm.drawScreen(m8, Gdx.graphics.getHeight() - tileWidth - m8, tileWidth, tileWidth, "arrow_move");
-
-        sm.drawScreen(tileWidth + 2 * m8, Gdx.graphics.getHeight() - tileWidth - m8, tileWidth, tileWidth, "btn");
-        sm.drawScreen(tileWidth + 2 * m8, Gdx.graphics.getHeight() - tileWidth - m8, tileWidth, tileWidth, "collisions");
-
-        sm.drawScreen(2 * tileWidth + 3 * m8, Gdx.graphics.getHeight() - tileWidth - m8, tileWidth, tileWidth, "btn");
-        sm.drawScreen(2 * tileWidth + 3 * m8, Gdx.graphics.getHeight() - tileWidth - m8, tileWidth, tileWidth, "delete");
+        // Active button framing
+        switch (action) {
+            case MOVE:
+                sm.drawScreen(m8, Gdx.graphics.getHeight() - tileWidth - m8, tileWidth, tileWidth, "frame");
+                break;
+            case HAND:
+                sm.drawScreen(tileWidth + 2 * m8, Gdx.graphics.getHeight() - tileWidth - m8, tileWidth, tileWidth, "frame");
+                break;
+            case COLLISIONS:
+                sm.drawScreen(2 * tileWidth + 3 * m8, Gdx.graphics.getHeight() - tileWidth - m8, tileWidth, tileWidth, "frame");
+                break;
+            case ZONE:
+                sm.drawScreen(3 * tileWidth + 4 * m8, Gdx.graphics.getHeight() - tileWidth - m8, tileWidth, tileWidth, "frame");                break;
+            case DELETE:
+                sm.drawScreen(4 * tileWidth + 5 * m8, Gdx.graphics.getHeight() - tileWidth - m8, tileWidth, tileWidth, "frame");                break;
+        }
 
 
-
-        TextManager.draw(String.valueOf("X: " + in.getX() + " Y: " + in.getY()), 20, Color.WHITE, false, g.getWidth() / 2f - 64, g.getHeight() - 32);
+        TextManager.draw("X: " + getUiMouse().x + " Y: " + getUiMouse().y, 20, Color.WHITE, false, g.getWidth() / 2f - 64, g.getHeight() - 32);
     }
 
-    private void updateUiTransform() {
-        float w = Gdx.graphics.getWidth();
-        float h = Gdx.graphics.getHeight();
+    private void initRegions() {
+        // Top-Left buttons
+        regions.put(new Region(8.0f, 1014.0f, 66.75f, 1072.5f), () -> {action = Action.MOVE;});
+        regions.put(new Region(75.0f, 1013.0f, 134.25f, 1072.5f),  () -> {action = Action.HAND;});
+        regions.put(new Region(144.0f, 1014.0f, 202.5f, 1071.75f),   () -> {action = Action.COLLISIONS;});
+        regions.put(new Region(212.0f, 1014.0f, 270.75f, 1072.5f), () -> {action = Action.ZONE;});
+        regions.put(new Region(280.0f, 1015.0f, 338.25f, 1071.75f), () -> {action = Action.DELETE;});
 
-        uiScale = Math.min(w / REF_WIDTH, h / REF_HEIGHT);
-
-        float vpW = REF_WIDTH * uiScale;
-        float vpH = REF_HEIGHT * uiScale;
-
-        uiOffsetX = (w - vpW) * 0.5f;
-        uiOffsetY = (h - vpH) * 0.5f;
+        // Block selector
+        regions.put(new Region(83.0f, 18.0f, 140.25f, 72.0f), () -> {
+                if (!(categoryCycler == categories.size() -1)) {
+                    categoryCycler++;
+                } else {
+                    categoryCycler = 0;
+                }
+                category = categories.get(categoryCycler);
+        });
     }
-
-    private Vector2 getUiMouse() {
-        float screenW = Gdx.graphics.getWidth();
-        float screenH = Gdx.graphics.getHeight();
-
-        float mx = Gdx.input.getX();
-        float my = screenH - Gdx.input.getY();
-
-        float uiX = (mx - uiOffsetX) / uiScale;
-        float uiY = (my - uiOffsetY) / uiScale;
-
-        return new Vector2(uiX, uiY);
-    }
-
-    private boolean isHovered(float mx, float my, float x1, float y1, float x2, float y2) {
-        return (mx >= x1 && mx <= x2) && (my >= y1 && my <= y2);
-    }
-
-
 }

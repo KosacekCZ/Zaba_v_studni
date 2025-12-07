@@ -20,6 +20,13 @@ public class Player {
         isDestroy = false;
     }
 
+    public void update(float x, float y, int health, int damage) {
+        this.x = x;
+        this.y = y;
+        this.health = health;
+        this.damage = damage;
+    }
+
     public String getId() {
         return id;
     }
