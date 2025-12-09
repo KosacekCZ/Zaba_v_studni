@@ -55,7 +55,7 @@ public abstract class Entity {
         this.y = y;
         this.health = health;
         this.damage = damage;
-        this.speed = speed;
+        this.speed = speed * 10; // Multiplied due to delta time adjustment
         this.texture = texture;
         prevPos = new Vector2(getX(), getY());
         sm = SpriteManager.getInstance();
@@ -174,5 +174,13 @@ public abstract class Entity {
 
     public void setDestroy(boolean destroy) {
         isDestroy = destroy;
+    }
+
+    public float getRotation() {
+        return rotation;
+    }
+
+    public void setRotation(float rotation) {
+        this.rotation = rotation;
     }
 }

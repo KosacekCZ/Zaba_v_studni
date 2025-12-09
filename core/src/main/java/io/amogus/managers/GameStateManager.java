@@ -18,6 +18,7 @@ public class GameStateManager {
 
     private GameStateManager() {
         gamestates = new HashMap<>();
+        EntityManager.init(this);
         registerGameStates();
     }
 

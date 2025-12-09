@@ -7,7 +7,7 @@ import io.amogus.entities.Projectile;
 
 public class Shotgun extends Item {
     public Shotgun(Entity owner) {
-        super(10, "Shotgun", owner.getX(), owner.getY(), 32, 32, "flusacka");
+        super(10, "Shotgun", owner.getX(), owner.getY(), 32, 32, "shotgun");
         this.owner = owner;
 
     }

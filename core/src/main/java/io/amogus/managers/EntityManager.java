@@ -1,7 +1,10 @@
 package io.amogus.managers;
 
+import com.badlogic.gdx.math.Rectangle;
 import io.amogus.entities.Entity;
 import io.amogus.entities.Player;
+import io.amogus.entities.Projectile;
+import io.amogus.leveleditor.Region;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,23 +17,36 @@ public class EntityManager implements io.amogus.managers.IEntityEvents {
     private Player localPlayer;
     private Player remotePlayer;
     private static int lastId;
+    private Region levelBounds;
 
     private final ServerManager svm;
+    private final GameStateManager gsm;
 
-    private static EntityManager instace;
+    private static EntityManager instance;
 
-    public static EntityManager getInstace() {
-        if (instace == null) instace = new EntityManager();
-        return instace;
+    public static EntityManager init(GameStateManager gsm) {
+        if (instance == null) {
+            instance = new EntityManager(gsm);
+        }
+        return instance;
     }
 
-    private EntityManager() {
+    public static EntityManager getInstance() {
+        if (instance == null) {
+            throw new IllegalStateException("EntityManager not initialized");
+        }
+        return instance;
+    }
+
+    private EntityManager(GameStateManager gsm) {
         entities = new ArrayList<Entity>();
         tempBuffer = new ArrayList<Entity>();
         players = new HashMap<String, Player>();
         lastId = 0;
         svm = ServerManager.getInstance();
+        this.gsm = gsm;
         svm.setEntityEvents(this);
+        levelBounds = gsm.getCurrentState().getBounds();
     }
 
     public void update() {
@@ -45,7 +61,52 @@ public class EntityManager implements io.amogus.managers.IEntityEvents {
                     }
                 }
             }
+
+            if (e instanceof Projectile) {
+                Rectangle r = e.getSprite().getBoundingRectangle();
+
+                float minX = levelBounds.x;
+                float maxX = levelBounds.x + levelBounds.w;
+                float minY = levelBounds.y;
+                float maxY = levelBounds.y + levelBounds.h;
+
+                boolean hitVertical = false;
+                boolean hitHorizontal = false;
+
+                if (r.x < minX) {
+                    e.getSprite().setX(minX);
+                    hitVertical = true;
+                } else if (r.x + r.width > maxX) {
+                    e.getSprite().setX(maxX - r.width);
+                    hitVertical = true;
+                }
+
+                if (r.y < minY) {
+                    e.getSprite().setY(minY);
+                    hitHorizontal = true;
+                } else if (r.y + r.height > maxY) {
+                    e.getSprite().setY(maxY - r.height);
+                    hitHorizontal = true;
+                }
+
+                if (hitVertical || hitHorizontal) {
+                    float angle = e.getRotation();
+
+                    if (hitVertical) {
+                        angle = 180f - angle;
+                    }
+                    if (hitHorizontal) {
+                        angle = -angle;
+                    }
+
+                    // normalize if you want: angle = (angle % 360f + 360f) % 360f;
+                    e.setRotation(angle);
+                    e.setRotation(angle);
+                }
+            }
         }
+
+
         entities.removeIf(Entity::isDestroy);
         entities.addAll(tempBuffer);
         tempBuffer.clear();

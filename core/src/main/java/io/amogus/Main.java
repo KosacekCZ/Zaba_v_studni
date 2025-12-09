@@ -4,12 +4,9 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.utils.ScreenUtils;
-import io.amogus.entities.Player;
 import io.amogus.gamestates.*;
-import io.amogus.leveleditor.LevelEditor;
 import io.amogus.managers.*;
 import io.jetbeans.GameServer;
-import org.json.Test;
 
 public class Main extends ApplicationAdapter {
     private ServerManager svm;
@@ -31,7 +28,7 @@ public class Main extends ApplicationAdapter {
 
         svm = ServerManager.getInstance();
         sm = SpriteManager.getInstance();
-        em = EntityManager.getInstace();
+        em = EntityManager.getInstance();
         gsm = GameStateManager.getInstance();
         vm = ViewportManager.getInstance();
 

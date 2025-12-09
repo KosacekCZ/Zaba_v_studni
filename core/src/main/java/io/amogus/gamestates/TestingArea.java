@@ -5,6 +5,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import io.amogus.entities.Player;
+import io.amogus.leveleditor.Region;
 import io.amogus.managers.EntityManager;
 import io.amogus.managers.GameStateManager;
 import io.amogus.managers.TextManager;
@@ -19,9 +20,10 @@ public class TestingArea extends Gamestate {
 
     public TestingArea(GameStateManager gsm) {
         super(E_Gamestate.TESTING, gsm);
-        em = EntityManager.getInstace();
+        em = EntityManager.getInstance();
         p = em.getLocalPlayer();
         setup();
+        setBounds(new Region(-worldSize, -worldSize, worldSize, worldSize));
     }
 
     private void setup() {
@@ -52,22 +54,22 @@ public class TestingArea extends Gamestate {
         Vector2 dir = new Vector2(0, 0);
 
         if (in.isKeyPressed(Input.Keys.W) && p.getDashVelocity().isZero()) {
-            dir.y += 1;
+            dir.y += 1 * Gdx.graphics.getDeltaTime();
         }
         if (in.isKeyPressed(Input.Keys.S) && p.getDashVelocity().isZero()) {
-            dir.y -= 1;
+            dir.y -= 1 * Gdx.graphics.getDeltaTime();
         }
         if (in.isKeyPressed(Input.Keys.A) && p.getDashVelocity().isZero()) {
-            dir.x -= 1;
+            dir.x -= 1 * Gdx.graphics.getDeltaTime();
         }
         if (in.isKeyPressed(Input.Keys.D) && p.getDashVelocity().isZero()) {
-            dir.x += 1;
+            dir.x += 1 * Gdx.graphics.getDeltaTime();
         }
 
         if (!dir.isZero() && p.getDashVelocity().isZero()) {
             dir.nor();
-            p.setX(p.getX() + dir.x * p.getSpeed());
-            p.setY(p.getY() + dir.y * p.getSpeed());
+            p.setX(p.getX() + dir.x * p.getSpeed() * Gdx.graphics.getDeltaTime());
+            p.setY(p.getY() + dir.y * p.getSpeed() * Gdx.graphics.getDeltaTime());
 
             if (in.isKeyJustPressed(Input.Keys.SHIFT_LEFT)) {
                 p.setDashVelocity(new Vector2(dir).scl(4f));
@@ -92,17 +94,17 @@ public class TestingArea extends Gamestate {
             }
         }
 
-        for (int i = -worldSize - (4 * 32); i <= worldSize + (4 * 32); i++) {
-            for (int j = -worldSize - (4 * 32); j <= worldSize + (4 * 32); j++) {
-                if ((i < worldSize && j < worldSize) ||
-                    (i > worldSize && j < worldSize) ||
-                    (i < worldSize && j > worldSize) ||
-                    (i > worldSize && j > worldSize)) {
-                    sm.draw(i, j, 32, 32,"brick_wall");
+        int tileSize = 32;
+        int borderTiles = 8;
+
+        for (int i = -worldSize - borderTiles * tileSize; i <= worldSize + borderTiles * tileSize; i += tileSize) {
+            for (int j = -worldSize - borderTiles * tileSize; j <= worldSize + borderTiles * tileSize; j += tileSize) {
+
+                if (Math.abs(i) > worldSize || Math.abs(j) > worldSize) {
+                    sm.draw(i, j, tileSize, tileSize, "brick_wall");
                 }
             }
         }
-
 
     }
 

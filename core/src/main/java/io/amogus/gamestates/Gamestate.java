@@ -3,6 +3,7 @@ package io.amogus.gamestates;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.math.Vector2;
+import io.amogus.leveleditor.Region;
 import io.amogus.managers.GameStateManager;
 import io.amogus.managers.ServerManager;
 import io.amogus.managers.SpriteManager;
@@ -25,6 +26,8 @@ public abstract class Gamestate extends InputAdapter {
 
     protected final float REF_WIDTH = 1920f;
     protected final float REF_HEIGHT = 1080f;
+
+    protected Region bounds;
 
     public Gamestate(E_Gamestate state, GameStateManager gsm) {
         sm = SpriteManager.getInstance();
@@ -70,6 +73,14 @@ public abstract class Gamestate extends InputAdapter {
 
     protected boolean isHovered(float mx, float my, float x1, float y1, float x2, float y2) {
         return (mx >= x1 && mx <= x2) && (my >= y1 && my <= y2);
+    }
+
+    public Region getBounds() {
+        return bounds;
+    }
+
+    public void setBounds(Region bounds) {
+        this.bounds = bounds;
     }
 
     @Override

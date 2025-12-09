@@ -31,7 +31,7 @@ public abstract class Item {
         this.rotation = 0;
         sm = SpriteManager.getInstance();
         vm = ViewportManager.getInstance();
-        em = EntityManager.getInstace();
+        em = EntityManager.getInstance();
     }
 
     public abstract void updateWorld();

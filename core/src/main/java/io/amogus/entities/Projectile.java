@@ -6,7 +6,7 @@ public class Projectile extends Entity {
     private float projectileSpin;
     public Projectile(float x, float y, float rotation, String texture) {
         super(x, y, rotation, texture);
-        this.speed = 8f;
+        this.speed = 10f * 10 * Gdx.graphics.getDeltaTime();
         this.projectileSpin = rotation;
     }
 
@@ -14,7 +14,6 @@ public class Projectile extends Entity {
     public void update() {
         projectileSpin = (projectileSpin + 16f) % 360;
         sm.draw(x, y, 8f, 8f, projectileSpin, texture);
-        System.out.println(projectileSpin);
         this.x += (float) Math.cos(Math.toRadians(this.rotation)) * speed;
         this.y += (float) Math.sin(Math.toRadians(this.rotation)) * speed;
     }

@@ -1,5 +1,6 @@
 package io.amogus.entities;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import io.amogus.items.Shotgun;
 
@@ -33,8 +34,8 @@ public class Player extends Entity {
 
         // Dashing
         if (!dashVelocity.isZero()) {
-            this.x += dashVelocity.x;
-            this.y += dashVelocity.y;
+            this.x += dashVelocity.x * Gdx.graphics.getDeltaTime();
+            this.y += dashVelocity.y * Gdx.graphics.getDeltaTime();
 
 
 
