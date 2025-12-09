@@ -35,7 +35,7 @@ public class Main extends ApplicationAdapter {
         gsm = GameStateManager.getInstance();
         vm = ViewportManager.getInstance();
 
-        vm.set_zoom(0.5f);
+        vm.set_zoom(0.3f);
 
         svm.connectSocket();
         svm.configSocketEvents();

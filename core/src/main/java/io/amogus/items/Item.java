@@ -1,7 +1,9 @@
 package io.amogus.items;
 
 import io.amogus.entities.Entity;
+import io.amogus.managers.EntityManager;
 import io.amogus.managers.SpriteManager;
+import io.amogus.managers.ViewportManager;
 
 public abstract class Item {
     protected int id;
@@ -10,9 +12,13 @@ public abstract class Item {
     protected float y;
     protected float w;
     protected float h;
+    protected float rotation;
     protected String texture;
-
-    protected SpriteManager sm = SpriteManager.getInstance();
+    protected Entity owner;
+    protected boolean isActive;
+    protected SpriteManager sm;
+    protected ViewportManager vm;
+    protected EntityManager em;
 
     public Item(int id, String name, float x, float y, float w, float h, String texture) {
         this.id = id;
@@ -22,6 +28,10 @@ public abstract class Item {
         this.w = w;
         this.h = h;
         this.texture = texture;
+        this.rotation = 0;
+        sm = SpriteManager.getInstance();
+        vm = ViewportManager.getInstance();
+        em = EntityManager.getInstace();
     }
 
     public abstract void updateWorld();
@@ -84,5 +94,13 @@ public abstract class Item {
 
     public void setTexture(String texture) {
         this.texture = texture;
+    }
+
+    public void setOwner(Entity owner) {
+        this.owner = owner;
+    }
+
+    public void setActive(boolean isActive) {
+        this.isActive = isActive;
     }
 }

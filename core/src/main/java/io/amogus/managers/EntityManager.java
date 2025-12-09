@@ -8,7 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 
 public class EntityManager implements io.amogus.managers.IEntityEvents {
-    private final List<Entity> entites;
+    private final List<Entity> entities;
+    private final List<Entity> tempBuffer;
     private final HashMap<String, Player> players;
     private Player localPlayer;
     private Player remotePlayer;
@@ -24,7 +25,8 @@ public class EntityManager implements io.amogus.managers.IEntityEvents {
     }
 
     private EntityManager() {
-        entites = new ArrayList<Entity>();
+        entities = new ArrayList<Entity>();
+        tempBuffer = new ArrayList<Entity>();
         players = new HashMap<String, Player>();
         lastId = 0;
         svm = ServerManager.getInstance();
@@ -32,10 +34,10 @@ public class EntityManager implements io.amogus.managers.IEntityEvents {
     }
 
     public void update() {
-        for (Entity e : entites) {
+        for (Entity e : entities) {
             e.update();
 
-            for (Entity e2 : entites) {
+            for (Entity e2 : entities) {
                 if (!e.equals(e2)) {
                     if (e.getSprite().getBoundingRectangle().overlaps(e2.getSprite().getBoundingRectangle())) {
                         e.onCollide(e2);
@@ -43,17 +45,16 @@ public class EntityManager implements io.amogus.managers.IEntityEvents {
                     }
                 }
             }
-
-
-
-            entites.removeIf(Entity::isDestroy);
         }
+        entities.removeIf(Entity::isDestroy);
+        entities.addAll(tempBuffer);
+        tempBuffer.clear();
     }
 
     public void spawnPlayer(Player player) {
         player.setPlayerNumber(++lastId);
         players.put(player.getPlayerId(), player);
-        entites.add(player);
+        entities.add(player);
 
         svm.spawnPlayer(player);
     }
@@ -61,14 +62,14 @@ public class EntityManager implements io.amogus.managers.IEntityEvents {
     public void spawnLocalPlayer(Player player) {
         player.setPlayerNumber(++lastId);
         players.put(player.getPlayerId(), player);
-        entites.add(player);
+        tempBuffer.add(player);
         localPlayer = player;
 
         svm.spawnPlayer(player);
     }
 
     public void spawnEntity(Entity e) {
-        entites.add(e);
+        tempBuffer.add(e);
     }
 
     public void removePlayer(String playerId) {

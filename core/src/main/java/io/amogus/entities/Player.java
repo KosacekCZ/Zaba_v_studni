@@ -18,9 +18,12 @@ public class Player extends Entity {
         this.h = 32f;
         this.playerId = id;
         this.dashVelocity = new Vector2(0, 0);
-        inHand = 0;
 
-        inventory.put(10, new Shotgun(this.getX(), this.getY()));
+        inventory.put(10, new Shotgun(this));
+        inHand = 10;
+        inventory.get(inHand).setActive(true);
+
+
     }
 
     public void update() {

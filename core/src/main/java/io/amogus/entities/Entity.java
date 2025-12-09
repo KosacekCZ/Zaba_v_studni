@@ -14,6 +14,7 @@ public abstract class Entity {
     protected float y;
     protected float w;
     protected float h;
+    protected float rotation;
     protected Vector2 prevPos;
     protected Vector2 pos;
     protected String texture;
@@ -29,6 +30,18 @@ public abstract class Entity {
     public Entity(float x, float y, String texture) {
         this.x = x;
         this.y = y;
+        this.texture = texture;
+        pos = new Vector2(x, y);
+        prevPos = new Vector2(getX(), getY());
+        sm = SpriteManager.getInstance();
+        svm = ServerManager.getInstance();
+        inventory = new HashMap<>();
+    }
+
+    public Entity(float x, float y, float rotation, String texture) {
+        this.x = x;
+        this.y = y;
+        this.rotation = rotation;
         this.texture = texture;
         pos = new Vector2(x, y);
         prevPos = new Vector2(getX(), getY());
