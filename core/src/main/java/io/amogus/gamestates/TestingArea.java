@@ -12,7 +12,7 @@ import io.amogus.managers.TextManager;
 public class TestingArea extends Gamestate {
 
     private final EntityManager em;
-    private final int worldSize = 512;
+    private final int worldSize = 256;
     private Player p;
     private final Input in = Gdx.input;
 
@@ -86,9 +86,20 @@ public class TestingArea extends Gamestate {
                 }
             }
 
-            if (i%128 == 0 || i==0) {
+            if (i%32 == 0 || i==0) {
                 TextManager.draw(String.valueOf(i), 8, Color.WHITE, false, i, 0);
                 TextManager.draw(String.valueOf(i), 8, Color.WHITE, false,0, i);
+            }
+        }
+
+        for (int i = -worldSize - (4 * 32); i <= worldSize + (4 * 32); i++) {
+            for (int j = -worldSize - (4 * 32); j <= worldSize + (4 * 32); j++) {
+                if ((i < worldSize && j < worldSize) ||
+                    (i > worldSize && j < worldSize) ||
+                    (i < worldSize && j > worldSize) ||
+                    (i > worldSize && j > worldSize)) {
+                    sm.draw(i, j, 32, 32,"brick_wall");
+                }
             }
         }
 
