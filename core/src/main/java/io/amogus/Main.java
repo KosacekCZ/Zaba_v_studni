@@ -7,15 +7,16 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import io.amogus.gamestates.*;
 import io.amogus.managers.*;
 import io.jetbeans.GameServer;
+import org.w3c.dom.Text;
 
 public class Main extends ApplicationAdapter {
-    private ServerManager svm;
-    private SpriteManager sm;
-    private EntityManager em;
-    private TextureManager tm;
-    private GameStateManager gsm;
+    private static SpriteManager sm = SpriteManager.getInstance();
+    private static LevelManager lm = LevelManager.getInstance();
+    private static TextureManager tm = TextureManager.getInstance();
+    private static ViewportManager vm = ViewportManager.getInstance();
+    private static ServerManager svm = ServerManager.getInstance();
+
     private GameServer server;
-    private ViewportManager vm;
 
     public Main(GameServer server) {
         this.server = server;
@@ -25,22 +26,9 @@ public class Main extends ApplicationAdapter {
     public void create() {
         tm = TextureManager.getInstance();
         tm.loadTextures();
-
-        svm = ServerManager.getInstance();
-        sm = SpriteManager.getInstance();
-        em = EntityManager.getInstance();
-        gsm = GameStateManager.getInstance();
-        vm = ViewportManager.getInstance();
-
-        vm.set_zoom(0.3f);
-
         svm.connectSocket();
         svm.configSocketEvents();
-
-
-
-        gsm.setGameState(E_Gamestate.TESTING);
-
+        lm.setGameState(E_Gamestate.TESTING);
     }
 
     @Override
@@ -52,20 +40,18 @@ public class Main extends ApplicationAdapter {
         }
 
         ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
-        vm.update();
-
         sm.setWorldProjection(vm.getWorldCombined());
         sm.setUiProjection(vm.getUiCombined());
 
         sm.beginWorld();
-        gsm.updateWorld();
+        lm.updateWorld();
         sm.end();
 
         sm.beginScreen();
-        gsm.updateScreen();
+        lm.updateScreen();
         sm.end();
 
-        gsm.handleInput();
+        lm.handleInput();
         svm.updateServer(Gdx.graphics.getDeltaTime());
     }
 

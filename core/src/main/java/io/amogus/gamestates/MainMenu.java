@@ -4,17 +4,17 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import io.amogus.leveleditor.Region;
-import io.amogus.managers.GameStateManager;
+import io.amogus.managers.LevelManager;
 import io.amogus.managers.TextManager;
 
 import java.util.HashMap;
 
-public class MainMenu extends Gamestate {
+public class MainMenu extends Level {
 
     private final HashMap<Region, Runnable> regions;
 
-    public MainMenu(GameStateManager gsm) {
-        super(E_Gamestate.MAIN_MENU, gsm);
+    public MainMenu(LevelManager lm) {
+        super(E_Gamestate.MAIN_MENU, lm);
         regions = new HashMap<>();
         initRegions();
     }
@@ -57,13 +57,13 @@ public class MainMenu extends Gamestate {
         }
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.T)) {
-            gsm.setGameState(E_Gamestate.TESTING);
+            lm.setGameState(E_Gamestate.TESTING);
         }
     }
 
     private void initRegions() {
         regions.put(new Region(Gdx.graphics.getWidth() / 2f - 128f, Gdx.graphics.getHeight() / 2f, Gdx.graphics.getWidth() / 2f + 128f, (Gdx.graphics.getHeight() / 2f) + 64f),
-            ()->{gsm.setGameState(E_Gamestate.TESTING);
+            ()->{lm.setGameState(E_Gamestate.TESTING);
                 System.out.println("Changing GameState");});
     }
 }

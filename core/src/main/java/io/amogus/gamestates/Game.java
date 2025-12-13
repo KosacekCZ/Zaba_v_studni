@@ -1,12 +1,12 @@
 package io.amogus.gamestates;
 
 import com.badlogic.gdx.graphics.Color;
-import io.amogus.managers.GameStateManager;
+import io.amogus.managers.LevelManager;
 
-public class Game extends Gamestate {
+public class Game extends Level {
 
-    public Game(GameStateManager gsm) {
-        super(E_Gamestate.GAME, gsm);
+    public Game(LevelManager lm) {
+        super(E_Gamestate.GAME, lm);
         setup();
     }
 

@@ -19,17 +19,9 @@ public class EntityManager implements io.amogus.managers.IEntityEvents {
     private static int lastId;
     private Region levelBounds;
 
-    private final ServerManager svm;
-    private final GameStateManager gsm;
+    private static final ServerManager svm = ServerManager.getInstance();
 
     private static EntityManager instance;
-
-    public static EntityManager init(GameStateManager gsm) {
-        if (instance == null) {
-            instance = new EntityManager(gsm);
-        }
-        return instance;
-    }
 
     public static EntityManager getInstance() {
         if (instance == null) {
@@ -38,15 +30,12 @@ public class EntityManager implements io.amogus.managers.IEntityEvents {
         return instance;
     }
 
-    private EntityManager(GameStateManager gsm) {
+    private EntityManager() {
         entities = new ArrayList<Entity>();
         tempBuffer = new ArrayList<Entity>();
         players = new HashMap<String, Player>();
         lastId = 0;
-        svm = ServerManager.getInstance();
-        this.gsm = gsm;
         svm.setEntityEvents(this);
-        levelBounds = gsm.getCurrentState().getBounds();
     }
 
     public void update() {
@@ -62,6 +51,7 @@ public class EntityManager implements io.amogus.managers.IEntityEvents {
                 }
             }
 
+            /*
             if (e instanceof Projectile) {
                 Rectangle r = e.getSprite().getBoundingRectangle();
 
@@ -104,6 +94,7 @@ public class EntityManager implements io.amogus.managers.IEntityEvents {
                     e.setRotation(angle);
                 }
             }
+             */
         }
 
 

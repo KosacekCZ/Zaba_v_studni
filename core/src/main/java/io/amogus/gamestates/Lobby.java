@@ -1,12 +1,11 @@
 package io.amogus.gamestates;
 
-import io.amogus.managers.GameStateManager;
-import io.amogus.managers.TextManager;
+import io.amogus.managers.LevelManager;
 
-public class Lobby extends Gamestate {
+public class Lobby extends Level {
 
-    public Lobby(GameStateManager gsm) {
-        super(E_Gamestate.LOBBY, gsm);
+    public Lobby(LevelManager lm) {
+        super(E_Gamestate.LOBBY, lm);
 
     }
 

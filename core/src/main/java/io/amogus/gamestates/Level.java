@@ -4,21 +4,21 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.math.Vector2;
 import io.amogus.leveleditor.Region;
-import io.amogus.managers.GameStateManager;
+import io.amogus.managers.LevelManager;
 import io.amogus.managers.ServerManager;
 import io.amogus.managers.SpriteManager;
 import io.amogus.managers.ViewportManager;
 
-public abstract class Gamestate extends InputAdapter {
+public abstract class Level extends InputAdapter {
     public E_Gamestate state;
 
     protected float scrollDeltaX;
     protected float scrollDeltaY;
 
-    protected final SpriteManager sm;
-    protected final GameStateManager gsm;
-    protected final ViewportManager vm;
-    protected final ServerManager svm;
+    protected static final SpriteManager sm = SpriteManager.getInstance();
+    protected static final ViewportManager vm = ViewportManager.getInstance();
+    protected static final ServerManager svm = ServerManager.getInstance();
+    protected static LevelManager lm;
 
     private float uiScale;
     private float uiOffsetX;
@@ -29,11 +29,8 @@ public abstract class Gamestate extends InputAdapter {
 
     protected Region bounds;
 
-    public Gamestate(E_Gamestate state, GameStateManager gsm) {
-        sm = SpriteManager.getInstance();
-        this.gsm = gsm;
-        vm = ViewportManager.getInstance();
-        svm = ServerManager.getInstance();
+    public Level(E_Gamestate state, LevelManager lm) {
+        Level.lm = lm;
         this.state = state;
         scrollDeltaY = 0f;
         scrollDeltaX = 0f;

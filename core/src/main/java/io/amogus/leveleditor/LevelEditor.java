@@ -6,17 +6,17 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import io.amogus.gamestates.E_Gamestate;
-import io.amogus.gamestates.Gamestate;
-import io.amogus.managers.GameStateManager;
+import io.amogus.gamestates.Level;
+import io.amogus.managers.LevelManager;
 import io.amogus.managers.TextManager;
 import io.amogus.managers.ViewportManager;
-import java.awt.*;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class LevelEditor extends Gamestate {
-    private final ViewportManager vm;
+public class LevelEditor extends Level {
+    private final ViewportManager vm = ViewportManager.getInstance();
 
     private Vector2 mouseDragStartVec;
     private Action action;
@@ -42,9 +42,8 @@ public class LevelEditor extends Gamestate {
 
 
 
-    public LevelEditor(GameStateManager gsm) {
-        super(E_Gamestate.EDITOR, gsm);
-        vm = ViewportManager.getInstance();
+    public LevelEditor(LevelManager lm) {
+        super(E_Gamestate.EDITOR, lm);
         mouseDragStartVec =  new Vector2(0, 0);
         action = Action.MOVE;
         category = Category.BLOCKS;

@@ -6,19 +6,18 @@ import io.amogus.leveleditor.LevelEditor;
 
 import java.util.HashMap;
 
-public class GameStateManager {
-    private static GameStateManager instance;
-    private final HashMap<E_Gamestate, Gamestate> gamestates;
-    private Gamestate currentState;
+public class LevelManager {
+    private static LevelManager instance;
+    private final HashMap<E_Gamestate, Level> gamestates;
+    private Level currentState;
 
-    public static GameStateManager getInstance() {
-        if(instance == null) instance = new GameStateManager();
+    public static LevelManager getInstance() {
+        if(instance == null) instance = new LevelManager();
         return instance;
     }
 
-    private GameStateManager() {
+    private LevelManager() {
         gamestates = new HashMap<>();
-        EntityManager.init(this);
         registerGameStates();
     }
 
@@ -34,16 +33,16 @@ public class GameStateManager {
         currentState.handleInput();
     }
 
-    public void addGameState(Gamestate gameState) {
+    public void addGameState(Level gameState) {
         gamestates.putIfAbsent(gameState.state, gameState);
     }
 
-    public Gamestate getCurrentState() {
+    public Level getCurrentState() {
         return currentState;
     }
 
     public void setGameState(E_Gamestate newState) {
-        Gamestate state = gamestates.get(newState);
+        Level state = gamestates.get(newState);
         if (state == null) {
             throw new IllegalStateException("No Gamestate registered for " + newState);
         }

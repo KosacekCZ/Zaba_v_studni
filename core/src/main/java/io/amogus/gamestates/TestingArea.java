@@ -7,10 +7,10 @@ import com.badlogic.gdx.math.Vector2;
 import io.amogus.entities.Player;
 import io.amogus.leveleditor.Region;
 import io.amogus.managers.EntityManager;
-import io.amogus.managers.GameStateManager;
+import io.amogus.managers.LevelManager;
 import io.amogus.managers.TextManager;
 
-public class TestingArea extends Gamestate {
+public class TestingArea extends Level {
 
     private final EntityManager em;
     private final int worldSize = 256;
@@ -18,8 +18,8 @@ public class TestingArea extends Gamestate {
     private final Input in = Gdx.input;
 
 
-    public TestingArea(GameStateManager gsm) {
-        super(E_Gamestate.TESTING, gsm);
+    public TestingArea(LevelManager lm) {
+        super(E_Gamestate.TESTING, lm);
         em = EntityManager.getInstance();
         p = em.getLocalPlayer();
         setup();
@@ -27,11 +27,12 @@ public class TestingArea extends Gamestate {
     }
 
     private void setup() {
-
+        vm.set_zoom(0.3f);
     }
 
     @Override
     public void updateWorld() {
+        vm.update();
 
         if (p != null) {
             vm.camFollow(p.getX() + 16f, p.getY() + 16f);
@@ -75,8 +76,6 @@ public class TestingArea extends Gamestate {
                 p.setDashVelocity(new Vector2(dir).scl(4f));
             }
         }
-
-
     }
 
     private void drawBackground() {
@@ -88,7 +87,7 @@ public class TestingArea extends Gamestate {
                 }
             }
 
-            if (i%32 == 0 || i==0) {
+            if (i % 32 == 0) {
                 TextManager.draw(String.valueOf(i), 8, Color.WHITE, false, i, 0);
                 TextManager.draw(String.valueOf(i), 8, Color.WHITE, false,0, i);
             }
@@ -105,7 +104,5 @@ public class TestingArea extends Gamestate {
                 }
             }
         }
-
     }
-
 }
