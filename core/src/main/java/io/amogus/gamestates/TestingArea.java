@@ -12,7 +12,7 @@ import io.amogus.managers.TextManager;
 
 public class TestingArea extends Level {
 
-    private final EntityManager em;
+    private static EntityManager em;
     private final int worldSize = 256;
     private Player p;
     private final Input in = Gdx.input;
@@ -27,7 +27,9 @@ public class TestingArea extends Level {
     }
 
     private void setup() {
-        vm.set_zoom(0.3f);
+        vm.set_zoom(0.5f);
+        svm.connectSocket();
+        svm.configSocketEvents();
     }
 
     @Override
@@ -38,10 +40,13 @@ public class TestingArea extends Level {
             vm.camFollow(p.getX() + 16f, p.getY() + 16f);
 
             drawBackground();
+            drawWalls();
+
             em.update();
         } else {
             p = em.getLocalPlayer();
         }
+        pm.update();
     }
 
     @Override
@@ -92,16 +97,39 @@ public class TestingArea extends Level {
                 TextManager.draw(String.valueOf(i), 8, Color.WHITE, false,0, i);
             }
         }
+    }
 
+    private void drawWalls() {
         int tileSize = 32;
         int borderTiles = 8;
 
-        for (int i = -worldSize - borderTiles * tileSize; i <= worldSize + borderTiles * tileSize; i += tileSize) {
-            for (int j = -worldSize - borderTiles * tileSize; j <= worldSize + borderTiles * tileSize; j += tileSize) {
+        int min = -worldSize;
+        int max = worldSize;
 
-                if (Math.abs(i) > worldSize || Math.abs(j) > worldSize) {
-                    sm.draw(i, j, tileSize, tileSize, "brick_wall");
-                }
+        int outerMin = min - borderTiles * tileSize;
+        int outerMax = max + borderTiles * tileSize;
+
+        // Left + Right strips
+        for (int x = outerMin; x < min; x += tileSize) {
+            for (int y = outerMin; y < outerMax; y += tileSize) {
+                sm.draw(x, y, tileSize, tileSize, "brick_wall");
+            }
+        }
+        for (int x = max; x < outerMax; x += tileSize) {
+            for (int y = outerMin; y < outerMax; y += tileSize) {
+                sm.draw(x, y, tileSize, tileSize, "brick_wall");
+            }
+        }
+
+        // Bottom + Top strips (only across the level width to avoid redrawing corners)
+        for (int x = min; x < max; x += tileSize) {
+            for (int y = outerMin; y < min; y += tileSize) {
+                sm.draw(x, y, tileSize, tileSize, "brick_wall");
+            }
+        }
+        for (int x = min; x < max; x += tileSize) {
+            for (int y = max; y < outerMax; y += tileSize) {
+                sm.draw(x, y, tileSize, tileSize, "brick_wall");
             }
         }
     }

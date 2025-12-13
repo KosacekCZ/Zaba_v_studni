@@ -21,16 +21,24 @@ public class LevelManager {
         registerGameStates();
     }
 
+    private void registerGameStates() {
+        addGameState(new MainMenu(this));
+        addGameState(new Lobby(this));
+        addGameState(new Game(this));
+        addGameState(new LevelEditor(this));
+        addGameState(new TestingArea(this));
+    }
+
+    public void handleInput() {
+        currentState.handleInput();
+    }
+
     public void updateWorld() {
         currentState.updateWorld();
     }
 
     public void updateScreen() {
         currentState.updateScreen();
-    }
-
-    public void handleInput() {
-        currentState.handleInput();
     }
 
     public void addGameState(Level gameState) {
@@ -50,11 +58,5 @@ public class LevelManager {
         Gdx.input.setInputProcessor(currentState);
     }
 
-    private void registerGameStates() {
-        addGameState(new MainMenu(this));
-        addGameState(new Lobby(this));
-        addGameState(new Game(this));
-        addGameState(new LevelEditor(this));
-        addGameState(new TestingArea(this));
-    }
+
 }

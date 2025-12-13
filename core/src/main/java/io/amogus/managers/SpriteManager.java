@@ -87,7 +87,13 @@ public class SpriteManager {
             throw new IllegalStateException("draw() called outside world pass. Use beginWorld() before draw(), or drawScreen().");
         }
         sd.line(x, y, x2, y2, color);
+    }
 
+    public void drawRect(float x, float y, float w, float h, Color color) {
+        if (mode != Mode.WORLD) {
+            throw new IllegalStateException("draw() called outside world pass. Use beginWorld() before draw(), or drawScreen().");
+        }
+        sd.filledRectangle(x, y, w, h, color);
     }
 
     public void drawScreen(float x, float y, float w, float h, String textureName) {

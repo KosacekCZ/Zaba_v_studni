@@ -4,10 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.math.Vector2;
 import io.amogus.leveleditor.Region;
-import io.amogus.managers.LevelManager;
-import io.amogus.managers.ServerManager;
-import io.amogus.managers.SpriteManager;
-import io.amogus.managers.ViewportManager;
+import io.amogus.managers.*;
 
 public abstract class Level extends InputAdapter {
     public E_Gamestate state;
@@ -15,10 +12,11 @@ public abstract class Level extends InputAdapter {
     protected float scrollDeltaX;
     protected float scrollDeltaY;
 
-    protected static final SpriteManager sm = SpriteManager.getInstance();
-    protected static final ViewportManager vm = ViewportManager.getInstance();
-    protected static final ServerManager svm = ServerManager.getInstance();
+    protected static SpriteManager sm;
+    protected static ViewportManager vm;
+    protected static ServerManager svm;
     protected static LevelManager lm;
+    protected static ParticleManager pm;
 
     private float uiScale;
     private float uiOffsetX;
@@ -34,6 +32,11 @@ public abstract class Level extends InputAdapter {
         this.state = state;
         scrollDeltaY = 0f;
         scrollDeltaX = 0f;
+        sm = SpriteManager.getInstance();
+        vm = ViewportManager.getInstance();
+        svm = ServerManager.getInstance();
+        pm = ParticleManager.getInstance();
+
     }
 
     public abstract void updateWorld();

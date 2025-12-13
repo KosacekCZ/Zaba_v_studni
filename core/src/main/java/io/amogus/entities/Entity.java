@@ -4,6 +4,8 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 import io.amogus.items.Item;
+import io.amogus.managers.LevelManager;
+import io.amogus.managers.ParticleManager;
 import io.amogus.managers.ServerManager;
 import io.amogus.managers.SpriteManager;
 
@@ -22,10 +24,13 @@ public abstract class Entity {
     protected int damage;
     protected float speed;
     protected boolean isDestroy;
-    protected SpriteManager sm;
-    protected ServerManager svm;
     protected HashMap<Integer, Item> inventory;
     protected int inHand;
+
+    protected SpriteManager sm;
+    protected ServerManager svm;
+    protected LevelManager lm;
+    protected ParticleManager pm;
 
     public Entity(float x, float y, String texture) {
         this.x = x;
@@ -33,9 +38,12 @@ public abstract class Entity {
         this.texture = texture;
         pos = new Vector2(x, y);
         prevPos = new Vector2(getX(), getY());
+        inventory = new HashMap<>();
+
         sm = SpriteManager.getInstance();
         svm = ServerManager.getInstance();
-        inventory = new HashMap<>();
+        lm = LevelManager.getInstance();
+        pm = ParticleManager.getInstance();
     }
 
     public Entity(float x, float y, float rotation, String texture) {
@@ -45,9 +53,12 @@ public abstract class Entity {
         this.texture = texture;
         pos = new Vector2(x, y);
         prevPos = new Vector2(getX(), getY());
+        inventory = new HashMap<>();
+
         sm = SpriteManager.getInstance();
         svm = ServerManager.getInstance();
-        inventory = new HashMap<>();
+        lm = LevelManager.getInstance();
+        pm = ParticleManager.getInstance();
     }
 
     public Entity(float x, float y, String texture, int health , int damage, float speed) {
@@ -58,9 +69,12 @@ public abstract class Entity {
         this.speed = speed * 10; // Multiplied due to delta time adjustment
         this.texture = texture;
         prevPos = new Vector2(getX(), getY());
+        inventory = new HashMap<>();
+
         sm = SpriteManager.getInstance();
         svm = ServerManager.getInstance();
-        inventory = new HashMap<>();
+        lm = LevelManager.getInstance();
+        pm = ParticleManager.getInstance();
     }
 
     public abstract void update();

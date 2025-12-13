@@ -17,20 +17,19 @@ public class EntityManager implements io.amogus.managers.IEntityEvents {
     private Player localPlayer;
     private Player remotePlayer;
     private static int lastId;
-    private Region levelBounds;
 
-    private static final ServerManager svm = ServerManager.getInstance();
+    private static ServerManager svm;
 
     private static EntityManager instance;
 
     public static EntityManager getInstance() {
-        if (instance == null) {
-            throw new IllegalStateException("EntityManager not initialized");
-        }
+        if (instance == null) instance = new EntityManager();
         return instance;
     }
 
     private EntityManager() {
+        svm = ServerManager.getInstance();
+
         entities = new ArrayList<Entity>();
         tempBuffer = new ArrayList<Entity>();
         players = new HashMap<String, Player>();
@@ -50,51 +49,6 @@ public class EntityManager implements io.amogus.managers.IEntityEvents {
                     }
                 }
             }
-
-            /*
-            if (e instanceof Projectile) {
-                Rectangle r = e.getSprite().getBoundingRectangle();
-
-                float minX = levelBounds.x;
-                float maxX = levelBounds.x + levelBounds.w;
-                float minY = levelBounds.y;
-                float maxY = levelBounds.y + levelBounds.h;
-
-                boolean hitVertical = false;
-                boolean hitHorizontal = false;
-
-                if (r.x < minX) {
-                    e.getSprite().setX(minX);
-                    hitVertical = true;
-                } else if (r.x + r.width > maxX) {
-                    e.getSprite().setX(maxX - r.width);
-                    hitVertical = true;
-                }
-
-                if (r.y < minY) {
-                    e.getSprite().setY(minY);
-                    hitHorizontal = true;
-                } else if (r.y + r.height > maxY) {
-                    e.getSprite().setY(maxY - r.height);
-                    hitHorizontal = true;
-                }
-
-                if (hitVertical || hitHorizontal) {
-                    float angle = e.getRotation();
-
-                    if (hitVertical) {
-                        angle = 180f - angle;
-                    }
-                    if (hitHorizontal) {
-                        angle = -angle;
-                    }
-
-                    // normalize if you want: angle = (angle % 360f + 360f) % 360f;
-                    e.setRotation(angle);
-                    e.setRotation(angle);
-                }
-            }
-             */
         }
 
 

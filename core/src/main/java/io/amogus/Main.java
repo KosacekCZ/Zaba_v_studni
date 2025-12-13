@@ -10,24 +10,24 @@ import io.jetbeans.GameServer;
 import org.w3c.dom.Text;
 
 public class Main extends ApplicationAdapter {
-    private static SpriteManager sm = SpriteManager.getInstance();
-    private static LevelManager lm = LevelManager.getInstance();
-    private static TextureManager tm = TextureManager.getInstance();
-    private static ViewportManager vm = ViewportManager.getInstance();
-    private static ServerManager svm = ServerManager.getInstance();
+    private static SpriteManager sm;
+    private static LevelManager lm;
+    private static ViewportManager vm;
+    private static TextureManager tm;
 
-    private GameServer server;
+    public Main(GameServer gameServer) {
 
-    public Main(GameServer server) {
-        this.server = server;
     }
+
 
     @Override
     public void create() {
-        tm = TextureManager.getInstance();
+        sm = SpriteManager.getInstance();
+        lm =  LevelManager.getInstance();
+        vm =  ViewportManager.getInstance();
+        tm =  TextureManager.getInstance();
+
         tm.loadTextures();
-        svm.connectSocket();
-        svm.configSocketEvents();
         lm.setGameState(E_Gamestate.TESTING);
     }
 
@@ -35,24 +35,26 @@ public class Main extends ApplicationAdapter {
     public void render() {
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             Gdx.app.exit();
-            server.stop();
             System.exit(0);
         }
-
         ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
+
         sm.setWorldProjection(vm.getWorldCombined());
         sm.setUiProjection(vm.getUiCombined());
 
+        lm.handleInput();
+
+        // World drawing
         sm.beginWorld();
         lm.updateWorld();
         sm.end();
 
+        // Screen drawing
         sm.beginScreen();
         lm.updateScreen();
         sm.end();
 
-        lm.handleInput();
-        svm.updateServer(Gdx.graphics.getDeltaTime());
+
     }
 
     @Override
