@@ -1,6 +1,5 @@
 package io.amogus.entities;
 
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 import io.amogus.items.Item;
@@ -77,7 +76,9 @@ public abstract class Entity {
         pm = ParticleManager.getInstance();
     }
 
-    public abstract void update();
+    public abstract void updateWorld();
+
+    public abstract void updateScreen();
 
     public abstract void onCollide(Entity e);
 

@@ -19,8 +19,12 @@ public class Projectile extends Entity {
         this.projectileSpin = rotation;
     }
 
+    public void updateScreen() {
+
+    }
+
     @Override
-    public void update() {
+    public void updateWorld() {
         pm.addParticle(new TraceParticle(x + 4, y + 4, 2, 2, 4));
 
         projectileSpin = (projectileSpin + 16f) % 360;

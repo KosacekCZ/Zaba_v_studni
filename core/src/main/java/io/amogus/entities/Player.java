@@ -27,10 +27,14 @@ public class Player extends Entity {
 
     }
 
-    public void update() {
+    public void updateScreen() {
+        inventory.get(inHand).updateScreen();
+    }
+
+    public void updateWorld() {
         sm.draw(getX(), getY(), getWidth(), getHeight(), texture);
         inventory.get(inHand).updateWorld();
-        inventory.get(inHand).updateScreen();
+
 
         // Dashing
         if (!dashVelocity.isZero()) {

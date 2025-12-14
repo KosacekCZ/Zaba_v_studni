@@ -1,10 +1,7 @@
 package io.amogus.managers;
 
-import com.badlogic.gdx.math.Rectangle;
 import io.amogus.entities.Entity;
 import io.amogus.entities.Player;
-import io.amogus.entities.Projectile;
-import io.amogus.leveleditor.Region;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,9 +34,9 @@ public class EntityManager implements io.amogus.managers.IEntityEvents {
         svm.setEntityEvents(this);
     }
 
-    public void update() {
+    public void updateWorld() {
         for (Entity e : entities) {
-            e.update();
+            e.updateWorld();
 
             for (Entity e2 : entities) {
                 if (!e.equals(e2)) {
@@ -55,6 +52,12 @@ public class EntityManager implements io.amogus.managers.IEntityEvents {
         entities.removeIf(Entity::isDestroy);
         entities.addAll(tempBuffer);
         tempBuffer.clear();
+    }
+
+    public void updateScreen() {
+        for (Entity e : entities) {
+            e.updateScreen();
+        }
     }
 
     public void spawnPlayer(Player player) {

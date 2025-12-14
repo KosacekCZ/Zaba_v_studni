@@ -42,7 +42,7 @@ public class TestingArea extends Level {
             drawBackground();
             drawWalls();
 
-            em.update();
+            em.updateWorld();
         } else {
             p = em.getLocalPlayer();
         }
@@ -51,7 +51,7 @@ public class TestingArea extends Level {
 
     @Override
     public void updateScreen() {
-
+        em.updateScreen();
     }
 
     @Override
