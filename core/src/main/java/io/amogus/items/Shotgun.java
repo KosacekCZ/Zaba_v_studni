@@ -8,7 +8,7 @@ import io.amogus.entities.Projectile;
 import java.util.HashMap;
 
 public class Shotgun extends Item {
-    private HashMap<Modifiers, Integer> modifiers;
+    private final HashMap<Modifiers, Integer> modifiers;
 
     public Shotgun(Entity owner) {
         super(10, "Shotgun", owner.getX(), owner.getY(), 32, 32, "shotgun");

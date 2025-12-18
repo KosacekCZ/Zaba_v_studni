@@ -2,6 +2,7 @@ package io.amogus.entities;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
+import io.amogus.items.Pistol;
 import io.amogus.items.Shotgun;
 
 import java.util.HashMap;
@@ -21,7 +22,8 @@ public class Player extends Entity {
         this.dashVelocity = new Vector2(0, 0);
 
         inventory.put(10, new Shotgun(this));
-        inHand = 10;
+        inventory.put(11, new Pistol(this));
+        inHand = 11;
         inventory.get(inHand).setActive(true);
 
 
