@@ -1,6 +1,7 @@
 package io.amogus.entities;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import io.amogus.items.Pistol;
 import io.amogus.items.Shotgun;
@@ -23,7 +24,7 @@ public class Player extends Entity {
 
         inventory.put(10, new Shotgun(this));
         inventory.put(11, new Pistol(this));
-        inHand = 11;
+        inHand = 10;
         inventory.get(inHand).setActive(true);
 
 
@@ -34,14 +35,18 @@ public class Player extends Entity {
     }
 
     public void updateWorld() {
-        sm.draw(getX(), getY(), getWidth(), getHeight(), texture);
+        boolean flipX = Gdx.input.getX() < Gdx.graphics.getWidth() / 2;
+
+        sm.draw(getX(), getY(), getWidth(), getHeight(), 0, flipX, texture);
+        sm.renderSpotlight(getX(), getY(), 300f, Color.WHITE, 0.5f);
+
         inventory.get(inHand).updateWorld();
 
 
         // Dashing
         if (!dashVelocity.isZero()) {
-            this.x += dashVelocity.x * Gdx.graphics.getDeltaTime();
-            this.y += dashVelocity.y * Gdx.graphics.getDeltaTime();
+            this.x += dashVelocity.x * Gdx.graphics.getDeltaTime() * 60f;
+            this.y += dashVelocity.y * Gdx.graphics.getDeltaTime() * 60f;
 
 
 

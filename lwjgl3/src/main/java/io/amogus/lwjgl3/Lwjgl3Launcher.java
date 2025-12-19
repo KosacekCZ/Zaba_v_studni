@@ -15,7 +15,11 @@ public class Lwjgl3Launcher {
         serverThread.setDaemon(true);
         serverThread.start();
 
-        createApplication(gameServer);
+        new Lwjgl3Application(new Main(gameServer), getDefaultConfiguration());
+        Runtime.getRuntime().addShutdownHook(new Thread(gameServer::stop, "server-shutdown"));
+
+
+        System.exit(0);
     }
 
     private static Lwjgl3Application createApplication(GameServer gameServer) {
@@ -25,6 +29,7 @@ public class Lwjgl3Launcher {
     private static Lwjgl3ApplicationConfiguration getDefaultConfiguration() {
         Lwjgl3ApplicationConfiguration configuration = new Lwjgl3ApplicationConfiguration();
         configuration.setTitle("Zaba v Studni");
+        configuration.setWindowIcon("icons/logo.ico");
         configuration.useVsync(true);
         configuration.setForegroundFPS(Lwjgl3ApplicationConfiguration.getDisplayMode().refreshRate + 1);
         configuration.setWindowedMode(1920, 1080);

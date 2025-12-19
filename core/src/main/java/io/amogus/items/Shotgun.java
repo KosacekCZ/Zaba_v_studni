@@ -18,7 +18,7 @@ public class Shotgun extends Item {
         modifiers.put(Modifiers.SHOTGUN_MAG, 1);
         modifiers.put(Modifiers.SHOTGUN_BULLETS, 1);
         modifiers.put(Modifiers.SHOTGUN_BOUNCE, 1);
-        modifiers.put(Modifiers.SHOTGUN_CHOKE, 1);
+        modifiers.put(Modifiers.SHOTGUN_CHOKE, 5);
 
     }
 
@@ -41,12 +41,35 @@ public class Shotgun extends Item {
         float dx = vm.getWorldMouseX() - (owner.getX() + 16f);
         float dy = vm.getWorldMouseY() - (owner.getY() + 16f);
         rotation = (float) Math.toDegrees(Math.atan2(dy, dx));
-        sm.draw(owner.getX(), owner.getY(), 32f, 32f, rotation - 45, texture);
 
+        // Draw Shotgun
+        boolean flipX = Gdx.input.getX() < Gdx.graphics.getWidth() / 2;
+        sm.draw(owner.getX(), owner.getY(), 32f, 32f, rotation - (flipX ? 135f : 45f), flipX, texture);
+
+
+        // Shooting
         if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE) || Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
-            em.spawnEntity(new Projectile(owner.getX() + 16f, owner.getY() + 16f, rotation - 15, "projectile"));
-            em.spawnEntity(new Projectile(owner.getX() + 16f, owner.getY() + 16f, rotation, "projectile"));
-            em.spawnEntity(new Projectile(owner.getX() + 16f, owner.getY() + 16f, rotation + 15, "projectile"));
+            int extra = modifiers.containsKey(Modifiers.SHOTGUN_BULLETS)
+                ? modifiers.get(Modifiers.SHOTGUN_BULLETS)
+                : 0;
+
+            int count = (extra * 2) + 3;
+
+            float choke = modifiers.containsKey(Modifiers.SHOTGUN_CHOKE)
+                ? modifiers.get(Modifiers.SHOTGUN_CHOKE)
+                : 0f;
+
+            float baseHalfSpreadDeg = 15f;
+            float halfSpreadDeg = Math.max(0f, baseHalfSpreadDeg - choke);
+
+            float start = rotation - halfSpreadDeg;
+
+            float step = (count <= 1) ? 0f : (2f * halfSpreadDeg) / (count - 1);
+
+            for (int i = 0; i < count; i++) {
+                float rot = start + i * step;
+                em.spawnEntity(new Projectile(owner.getX() + 16f, owner.getY() + 16f, rot, "projectile"));
+            }
         }
     }
 

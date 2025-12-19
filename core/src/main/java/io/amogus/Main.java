@@ -14,9 +14,12 @@ public class Main extends ApplicationAdapter {
     private static LevelManager lm;
     private static ViewportManager vm;
     private static TextureManager tm;
+    private static ServerManager svm;
+
+    private final GameServer gameServer;
 
     public Main(GameServer gameServer) {
-
+        this.gameServer = gameServer;
     }
 
 
@@ -26,16 +29,18 @@ public class Main extends ApplicationAdapter {
         lm =  LevelManager.getInstance();
         vm =  ViewportManager.getInstance();
         tm =  TextureManager.getInstance();
+        svm = ServerManager.getInstance();
 
         tm.loadTextures();
         lm.setGameState(E_Gamestate.TESTING);
+
+        sm.setGlobalIllumination(0.6f);
     }
 
     @Override
     public void render() {
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             Gdx.app.exit();
-            System.exit(0);
         }
         ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
 
@@ -60,10 +65,30 @@ public class Main extends ApplicationAdapter {
     @Override
     public void dispose() {
         sm.dispose();
+        svm.disconnectSocket();
+        if (gameServer != null) gameServer.stop();
+
+        java.util.Map<Thread, StackTraceElement[]> all = Thread.getAllStackTraces();
+        for (java.util.Map.Entry<Thread, StackTraceElement[]> e : all.entrySet()) {
+            Thread t = e.getKey();
+            if (!t.isAlive() || t.isDaemon()) continue;
+
+            String n = t.getName();
+            if (n.contains("OkHttp Dispatcher") || n.startsWith("Timer-") || n.contains("globalEventExecutor")) {
+                System.out.println("=== " + n + " state=" + t.getState() + " ===");
+                StackTraceElement[] trace = e.getValue();
+                for (int i = 0; i < trace.length; i++) {
+                    System.out.println("  at " + trace[i]);
+                }
+            }
+        }
+
     }
 
     @Override
     public void resize(int width, int height) {
         vm.resize(width, height);
+        SpriteManager.getInstance().resize(width, height);
+
     }
 }

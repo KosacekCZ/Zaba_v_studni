@@ -42,6 +42,16 @@ public class ServerManager {
         }
     }
 
+    public void disconnectSocket() {
+        if (this.socket != null) {
+            try {
+                socket.disconnect();
+            } catch (Exception ex) {
+                Gdx.app.log("SocketIO", ex.getMessage());
+            }
+        }
+    }
+
     public void configSocketEvents() {
         socket.on(Socket.EVENT_CONNECT, args -> {
             socketId = socket.id();

@@ -15,7 +15,7 @@ public class Projectile extends Entity {
     public Projectile(float x, float y, float rotation, String texture) {
         super(x, y, rotation, texture);
         this.levelBounds = lm.getCurrentState().getBounds();
-        this.speed = 50f * 10 * Gdx.graphics.getDeltaTime();
+        this.speed = 60f * 10 * Gdx.graphics.getDeltaTime();
         this.projectileSpin = rotation;
     }
 
@@ -25,7 +25,8 @@ public class Projectile extends Entity {
 
     @Override
     public void updateWorld() {
-        pm.addParticle(new TraceParticle(x + 4, y + 4, 2, 2, 4));
+        //pm.addParticle(new TraceParticle(x + 4, y + 4, 2, 2, 4));
+        sm.renderSpotlight(x + 4f, y + 4f, 5f, Color.ORANGE, 2.0f);
 
         projectileSpin = (projectileSpin + 16f) % 360;
         sm.draw(x, y, 8f, 8f, projectileSpin, texture);
