@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
+import io.amogus.entities.DroppedItem;
 import io.amogus.entities.Player;
 import io.amogus.leveleditor.Region;
 import io.amogus.managers.EntityManager;
@@ -30,6 +31,7 @@ public class TestingArea extends Level {
         vm.set_zoom(0.5f);
         svm.connectSocket();
         svm.configSocketEvents();
+
     }
 
     @Override
