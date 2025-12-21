@@ -117,7 +117,6 @@ public class SpriteManager {
         batch.draw(r.getTexture(), x, y, w / 2f, h / 2f, w, h, 1f, 1f, rotation, 0, 0, r.getRegionWidth(), r.getRegionHeight(), flipX, false);
     }
 
-
     public void drawLine(float x, float x2, float y, float y2, Color color) {
         if (mode != Mode.WORLD) throw new IllegalStateException("drawLine() called outside world pass. Use beginWorld() before drawLine().");
         sd.line(x, y, x2, y2, color);
@@ -141,6 +140,24 @@ public class SpriteManager {
     public void loadSprite(String name, String path) {
         textures.put(name, new Texture(path));
     }
+
+    public TextureRegion[] getRegions(String texture, int frames) {
+        Texture t = textures.get(texture);
+        if (t == null) return new TextureRegion[0];
+
+        int frameW = 32;
+        int frameH = 32;
+
+        int maxFrames = t.getWidth() / frameW;
+        int count = Math.min(frames, maxFrames);
+
+        TextureRegion[] regions = new TextureRegion[count];
+        for (int i = 0; i < count; i++) {
+            regions[i] = new TextureRegion(t, i * frameW, 0, frameW, frameH);
+        }
+        return regions;
+    }
+
 
     public SpriteBatch getBatch() {
         return batch;

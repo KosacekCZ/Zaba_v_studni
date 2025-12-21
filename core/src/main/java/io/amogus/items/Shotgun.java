@@ -29,7 +29,7 @@ public class Shotgun extends Item {
 
         sm.drawScreen(screenWidth - ((2 * textureSize) + (2 * 16)), 32, (textureSize * 4) + (3 * (textureSize / 4)), textureSize, "modifiers_gui");
 
-        sm.drawScreen(screenWidth - ((2 * textureSize) + (2 * 24)), 0, textureSize * 1.5f, textureSize * 1.5f, "choke");
+        sm.drawScreen(screenWidth - ((2 * textureSize) + (2 * 24 )), 0, textureSize * 1.5f, textureSize * 1.5f, "choke");
         sm.drawScreen(screenWidth - (textureSize + 32), 0, textureSize * 1.5f, textureSize * 1.5f, "extended_magazine");
 
         sm.drawScreen(screenWidth - ((2 * textureSize) + (2 * 16)), 32, (textureSize * 4) + (3 * (textureSize / 4)), textureSize, "modifiers_gui_overlay");

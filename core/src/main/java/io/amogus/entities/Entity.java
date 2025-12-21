@@ -3,10 +3,7 @@ package io.amogus.entities;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 import io.amogus.items.Item;
-import io.amogus.managers.LevelManager;
-import io.amogus.managers.ParticleManager;
-import io.amogus.managers.ServerManager;
-import io.amogus.managers.SpriteManager;
+import io.amogus.managers.*;
 
 import java.util.HashMap;
 
@@ -30,6 +27,7 @@ public abstract class Entity {
     protected ServerManager svm;
     protected LevelManager lm;
     protected ParticleManager pm;
+    protected ViewportManager vm;
 
     public Entity(float x, float y, String texture) {
         this.x = x;
@@ -43,6 +41,7 @@ public abstract class Entity {
         svm = ServerManager.getInstance();
         lm = LevelManager.getInstance();
         pm = ParticleManager.getInstance();
+        vm = ViewportManager.getInstance();
     }
 
     public Entity(float x, float y, float rotation, String texture) {
@@ -58,6 +57,7 @@ public abstract class Entity {
         svm = ServerManager.getInstance();
         lm = LevelManager.getInstance();
         pm = ParticleManager.getInstance();
+        vm = ViewportManager.getInstance();
     }
 
     public Entity(float x, float y, String texture, int health , int damage, float speed) {
@@ -74,6 +74,7 @@ public abstract class Entity {
         svm = ServerManager.getInstance();
         lm = LevelManager.getInstance();
         pm = ParticleManager.getInstance();
+        vm = ViewportManager.getInstance();
     }
 
     public abstract void updateWorld();

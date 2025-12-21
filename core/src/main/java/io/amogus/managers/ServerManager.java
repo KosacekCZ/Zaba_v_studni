@@ -56,7 +56,7 @@ public class ServerManager {
         socket.on(Socket.EVENT_CONNECT, args -> {
             socketId = socket.id();
             Gdx.app.log("SocketIO", "Connected, id = " + socketId);
-            entityEvents.spawnLocalPlayer(new Player(socketId, 0, 0, 100, 10, 15, "player_green"));
+            entityEvents.spawnLocalPlayer(new Player(socketId, 0, 0, 100, 10, 15, "player_base"));
         }).on("newPlayer", args -> {
             if (args.length == 0 || !(args[0] instanceof JSONObject)) return;
             JSONObject data = (JSONObject) args[0];

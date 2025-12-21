@@ -3,10 +3,9 @@ package io.amogus.entities;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import io.amogus.items.Pistol;
 import io.amogus.items.Shotgun;
-
-import java.util.HashMap;
 
 public class Player extends Entity {
     private int playerNumber;
@@ -14,6 +13,12 @@ public class Player extends Entity {
     private String playerId;
     private Vector2 dashVelocity;
     float decel = 0.125f;
+
+    private final Vector3 mouseWorld = new Vector3();
+    private final Vector2 toMouse = new Vector2();
+
+    private final float maxEyeOffsetPx = 0.6f;
+    private final float pixelsPerUnit = 1f;
 
     public Player(String id, float x, float y, int health, int damage, float speed, String texture) {
         super(x, y, texture, health, damage, speed);
@@ -37,7 +42,27 @@ public class Player extends Entity {
     public void updateWorld() {
         boolean flipX = Gdx.input.getX() < Gdx.graphics.getWidth() / 2;
 
+        // Player draw
+        // Base
         sm.draw(getX(), getY(), getWidth(), getHeight(), 0, flipX, texture);
+
+        // Eyes
+        mouseWorld.set(Gdx.input.getX(), Gdx.input.getY(), 0f);
+        vm.getWorldCamera().unproject(mouseWorld);
+
+        float cx = getX() + getWidth() * 0.5f;
+        float cy = getY() + getHeight() * 0.5f;
+
+        toMouse.set(mouseWorld.x - cx, mouseWorld.y - cy);
+
+        float maxEyeOffsetWorld = maxEyeOffsetPx / pixelsPerUnit;
+        if (toMouse.len2() > 0.0001f) toMouse.nor().scl(maxEyeOffsetWorld);
+        else toMouse.setZero();
+
+        sm.draw(getX() + toMouse.x, getY() + toMouse.y, getWidth(), getHeight(), 0, flipX, "player_eyes");
+
+
+
         sm.renderSpotlight(getX(), getY(), 300f, Color.WHITE, 0.5f);
 
         inventory.get(inHand).updateWorld();
