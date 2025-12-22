@@ -22,7 +22,9 @@ public class Pistol extends Item {
         float dx = vm.getWorldMouseX() - (owner.getX() + 16f);
         float dy = vm.getWorldMouseY() - (owner.getY() + 16f);
         rotation = (float) Math.toDegrees(Math.atan2(dy, dx));
-        sm.draw(owner.getX(), owner.getY(), 32f, 32f, rotation - 45, texture);
+
+        boolean flipX = Gdx.input.getX() < Gdx.graphics.getWidth() / 2;
+        sm.draw(owner.getX(), owner.getY(), 32f, 32f, rotation - (flipX ? 135f : 45f), flipX, texture);
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE) || Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
             em.spawnEntity(new Projectile(owner.getX() + 16f, owner.getY() + 16f, rotation, "projectile"));
