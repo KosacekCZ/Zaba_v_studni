@@ -28,6 +28,12 @@ public class LevelManager {
         addGameState(new TestingArea(this));
     }
 
+    public void setup() {
+        for (Level l : gamestates.values()) {
+            l.setup();
+        }
+    }
+
     public void handleInput() {
         currentState.handleInput();
     }

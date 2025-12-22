@@ -6,6 +6,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import io.amogus.items.Pistol;
 import io.amogus.items.Shotgun;
+import io.amogus.managers.Managers;
+import io.amogus.particles.DashParticle;
 
 public class Player extends Entity {
     private int playerNumber;
@@ -13,6 +15,8 @@ public class Player extends Entity {
     private String playerId;
     private Vector2 dashVelocity;
     float decel = 0.125f;
+    private boolean isMoving;
+    private boolean isDashing;
 
     private final Vector3 mouseWorld = new Vector3();
     private final Vector2 toMouse = new Vector2();
@@ -26,7 +30,7 @@ public class Player extends Entity {
 
         inventory.put(10, new Shotgun(this));
         inventory.put(11, new Pistol(this));
-        inHand = 10;
+        inHand = 11;
         inventory.get(inHand).setActive(true);
 
 
@@ -37,9 +41,8 @@ public class Player extends Entity {
     }
 
     public void updateWorld() {
-        drawPlayer();
         handleDashing();
-
+        drawPlayer();
         inventory.get(inHand).updateWorld();
     }
 
@@ -89,8 +92,13 @@ public class Player extends Entity {
 
         // Player draw
         // Base
-        sm.draw(getX(), getY(), getWidth(), getHeight(), 0, flipX, texture);
-
+        if (isMoving) {
+            sm.draw(getX(), getY(), getWidth(), getHeight(), 0, flipX, Managers.am.animateSprite(6, Gdx.graphics.getDeltaTime(), "player_base_animated"));
+        } else if (isDashing) {
+            sm.draw(getX(), getY(), getWidth(), getHeight(), 0, flipX, "player_base_dash");
+        } else {
+            sm.draw(getX(), getY(), getWidth(), getHeight(), 0, flipX, "player_base");
+        }
         // Eyes
         mouseWorld.set(Gdx.input.getX(), Gdx.input.getY(), 0f);
         vm.getWorldCamera().unproject(mouseWorld);
@@ -116,10 +124,9 @@ public class Player extends Entity {
     private void handleDashing() {
         // Dashing
         if (!dashVelocity.isZero()) {
+            this.isDashing = true;
             this.x += dashVelocity.x * Gdx.graphics.getDeltaTime() * 60f;
             this.y += dashVelocity.y * Gdx.graphics.getDeltaTime() * 60f;
-
-
 
             if (dashVelocity.x > 0) {
                 dashVelocity.x -= decel;
@@ -136,6 +143,14 @@ public class Player extends Entity {
                 dashVelocity.y += decel;
                 if (dashVelocity.y > 0) dashVelocity.y = 0;
             }
+            Managers.pm.addParticle(new DashParticle(x, y, 16, 16, 16));
+
+        } else {
+            isDashing = false;
         }
+    }
+
+    public void setMoving(boolean moving) {
+        this.isMoving = moving;
     }
 }

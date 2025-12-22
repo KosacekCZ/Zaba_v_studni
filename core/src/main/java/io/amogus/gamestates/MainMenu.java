@@ -20,6 +20,12 @@ public class MainMenu extends Level {
     }
 
     @Override
+    public void setup() {
+
+    }
+
+
+    @Override
     public void updateWorld() {
         float tileSize = 32f;
         float worldWidth = vm.getWorldViewport().getWorldWidth() * vm.getWorldCamera().zoom;

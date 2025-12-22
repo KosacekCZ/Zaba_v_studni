@@ -62,6 +62,12 @@ public class LevelEditor extends Level {
     }
 
     @Override
+    public void setup() {
+
+    }
+
+
+    @Override
     public void handleInput() {
 
         switch (action) {

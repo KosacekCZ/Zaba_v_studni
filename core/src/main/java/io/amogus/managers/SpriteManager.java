@@ -109,6 +109,11 @@ public class SpriteManager {
         batch.draw(new TextureRegion(textures.get(textureName)), x, y, w / 2f, h / 2f, w, h, 1f, 1f, rotation);
     }
 
+    public void draw(float x, float y, float w, float h, float rotation, TextureRegion region) {
+        if (mode != Mode.WORLD) throw new IllegalStateException("draw() called outside world pass. Use beginWorld() before draw(), or drawScreen().");
+        batch.draw(region, x, y, w / 2f, h / 2f, w, h, 1f, 1f, rotation);
+    }
+
     public void draw(float x, float y, float w, float h, float rotation, boolean flipX, String textureName) {
         if (mode != Mode.WORLD) {
             throw new IllegalStateException("draw() called outside world pass. Use beginWorld() before draw(), or drawScreen().");
@@ -116,6 +121,25 @@ public class SpriteManager {
         TextureRegion r = new TextureRegion(textures.get(textureName));
         batch.draw(r.getTexture(), x, y, w / 2f, h / 2f, w, h, 1f, 1f, rotation, 0, 0, r.getRegionWidth(), r.getRegionHeight(), flipX, false);
     }
+
+    public void draw(float x, float y, float w, float h, float rotation, boolean flipX, TextureRegion region) {
+        if (mode != Mode.WORLD) {
+            throw new IllegalStateException("draw() called outside world pass. Use beginWorld() before draw(), or drawScreen().");
+        }
+
+        batch.draw(
+            region.getTexture(),
+            x, y,
+            w / 2f, h / 2f,
+            w, h,
+            1f, 1f,
+            rotation,
+            region.getRegionX(), region.getRegionY(),
+            region.getRegionWidth(), region.getRegionHeight(),
+            flipX, false
+        );
+    }
+
 
     public void drawLine(float x, float x2, float y, float y2, Color color) {
         if (mode != Mode.WORLD) throw new IllegalStateException("drawLine() called outside world pass. Use beginWorld() before drawLine().");

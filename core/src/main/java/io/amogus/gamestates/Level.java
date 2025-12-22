@@ -41,6 +41,8 @@ public abstract class Level extends InputAdapter {
 
     }
 
+    public abstract void setup();
+
     public abstract void updateWorld();
 
     public abstract void updateScreen();

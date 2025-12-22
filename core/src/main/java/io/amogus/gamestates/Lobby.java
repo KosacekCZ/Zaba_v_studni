@@ -10,6 +10,11 @@ public class Lobby extends Level {
     }
 
     @Override
+    public void setup() {
+
+    }
+
+    @Override
     public void updateWorld() {
 
     }

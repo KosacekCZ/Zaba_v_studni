@@ -21,16 +21,14 @@ public class TestingArea extends Level {
 
     public TestingArea(LevelManager lm) {
         super(E_Gamestate.TESTING, lm);
-        p = em.getLocalPlayer();
-        setup();
-        setBounds(new Region(-worldSize, -worldSize, worldSize, worldSize));
     }
 
-    private void setup() {
-        vm.set_zoom(0.5f);
+    public void setup() {
+        vm.set_zoom(0.4f);
         svm.connectSocket();
         svm.configSocketEvents();
-
+        p = em.getLocalPlayer();
+        setBounds(new Region(-worldSize, -worldSize, worldSize, worldSize));
     }
 
     @Override
@@ -60,26 +58,33 @@ public class TestingArea extends Level {
         // Player controls
         Vector2 dir = new Vector2(0, 0);
 
-        if (in.isKeyPressed(Input.Keys.W) && p.getDashVelocity().isZero()) {
-            dir.y += 1 * Gdx.graphics.getDeltaTime();
-        }
-        if (in.isKeyPressed(Input.Keys.S) && p.getDashVelocity().isZero()) {
-            dir.y -= 1 * Gdx.graphics.getDeltaTime();
-        }
-        if (in.isKeyPressed(Input.Keys.A) && p.getDashVelocity().isZero()) {
-            dir.x -= 1 * Gdx.graphics.getDeltaTime();
-        }
-        if (in.isKeyPressed(Input.Keys.D) && p.getDashVelocity().isZero()) {
-            dir.x += 1 * Gdx.graphics.getDeltaTime();
-        }
+        if (p != null) {
+            p.setMoving(false);
+            if (in.isKeyPressed(Input.Keys.W) && p.getDashVelocity().isZero()) {
+                dir.y += 1 * Gdx.graphics.getDeltaTime();
+                p.setMoving(true);
+            }
+            if (in.isKeyPressed(Input.Keys.S) && p.getDashVelocity().isZero()) {
+                dir.y -= 1 * Gdx.graphics.getDeltaTime();
+                p.setMoving(true);
+            }
+            if (in.isKeyPressed(Input.Keys.A) && p.getDashVelocity().isZero()) {
+                dir.x -= 1 * Gdx.graphics.getDeltaTime();
+                p.setMoving(true);
+            }
+            if (in.isKeyPressed(Input.Keys.D) && p.getDashVelocity().isZero()) {
+                dir.x += 1 * Gdx.graphics.getDeltaTime();
+                p.setMoving(true);
+            }
 
-        if (!dir.isZero() && p.getDashVelocity().isZero()) {
-            dir.nor();
-            p.setX(p.getX() + dir.x * p.getSpeed() * Gdx.graphics.getDeltaTime());
-            p.setY(p.getY() + dir.y * p.getSpeed() * Gdx.graphics.getDeltaTime());
+            if (!dir.isZero() && p.getDashVelocity().isZero()) {
+                dir.nor();
+                p.setX(p.getX() + dir.x * p.getSpeed() * Gdx.graphics.getDeltaTime());
+                p.setY(p.getY() + dir.y * p.getSpeed() * Gdx.graphics.getDeltaTime());
 
-            if (in.isKeyJustPressed(Input.Keys.SHIFT_LEFT)) {
-                p.setDashVelocity(new Vector2(dir).scl(4f));
+                if (in.isKeyJustPressed(Input.Keys.SHIFT_LEFT)) {
+                    p.setDashVelocity(new Vector2(dir).scl(4f));
+                }
             }
         }
     }

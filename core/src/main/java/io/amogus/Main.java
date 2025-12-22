@@ -31,7 +31,9 @@ public class Main extends ApplicationAdapter {
         Managers.tm.loadTextures();
 
         Managers.lm.registerGameStates();
+        Managers.lm.setup();
         Managers.lm.setGameState(E_Gamestate.TESTING);
+
 
         Managers.sm.setGlobalIllumination(0.6f);
     }
