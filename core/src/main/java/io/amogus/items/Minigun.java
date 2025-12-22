@@ -28,8 +28,11 @@ public class Minigun extends Item{
 
         if (Gdx.input.isButtonPressed(Input.Buttons.RIGHT)) {
             sm.draw(owner.getX(), owner.getY() - 4f, 32f, 32f, rotation - (flipX ? 135f : 45f), flipX, Managers.am.animateSprite(6, Gdx.graphics.getDeltaTime(), "minigun_spin"));
+
             if (Gdx.input.isKeyPressed(Input.Keys.SPACE) || Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
-                em.spawnEntity(new Projectile(owner.getX() + 12f, owner.getY() + 8f, 15, rotation, "projectile", 1));
+                float spreadDeg = 6f;
+                float r = rotation + com.badlogic.gdx.math.MathUtils.random(-spreadDeg, spreadDeg);
+                em.spawnEntity(new Projectile(owner.getX() + 12f, owner.getY() + 8f, 15, r, "projectile", 1));
             }
         } else {
             sm.draw(owner.getX(), owner.getY() - 4f, 32f, 32f, rotation - (flipX ? 135f : 45f), flipX, texture);
