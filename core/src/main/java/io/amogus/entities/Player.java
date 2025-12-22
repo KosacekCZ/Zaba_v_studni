@@ -17,9 +17,6 @@ public class Player extends Entity {
     private final Vector3 mouseWorld = new Vector3();
     private final Vector2 toMouse = new Vector2();
 
-    private final float maxEyeOffsetPx = 0.6f;
-    private final float pixelsPerUnit = 1f;
-
     public Player(String id, float x, float y, int health, int damage, float speed, String texture) {
         super(x, y, texture, health, damage, speed);
         this.w = 32f;
@@ -40,58 +37,10 @@ public class Player extends Entity {
     }
 
     public void updateWorld() {
-        boolean flipX = Gdx.input.getX() < Gdx.graphics.getWidth() / 2;
-
-        // Player draw
-        // Base
-        sm.draw(getX(), getY(), getWidth(), getHeight(), 0, flipX, texture);
-
-        // Eyes
-        mouseWorld.set(Gdx.input.getX(), Gdx.input.getY(), 0f);
-        vm.getWorldCamera().unproject(mouseWorld);
-
-        float cx = getX() + getWidth() * 0.5f;
-        float cy = getY() + getHeight() * 0.5f;
-
-        toMouse.set(mouseWorld.x - cx, mouseWorld.y - cy);
-
-        float maxEyeOffsetWorld = maxEyeOffsetPx / pixelsPerUnit;
-        if (toMouse.len2() > 0.0001f) toMouse.nor().scl(maxEyeOffsetWorld);
-        else toMouse.setZero();
-
-        sm.draw(getX() + toMouse.x, getY() + toMouse.y, getWidth(), getHeight(), 0, flipX, "player_eyes");
-
-
-
-        sm.renderSpotlight(getX(), getY(), 300f, Color.WHITE, 0.5f);
+        drawPlayer();
+        handleDashing();
 
         inventory.get(inHand).updateWorld();
-
-
-        // Dashing
-        if (!dashVelocity.isZero()) {
-            this.x += dashVelocity.x * Gdx.graphics.getDeltaTime() * 60f;
-            this.y += dashVelocity.y * Gdx.graphics.getDeltaTime() * 60f;
-
-
-
-            if (dashVelocity.x > 0) {
-                dashVelocity.x -= decel;
-                if (dashVelocity.x < 0) dashVelocity.x = 0;
-            } else if (dashVelocity.x < 0) {
-                dashVelocity.x += decel;
-                if (dashVelocity.x > 0) dashVelocity.x = 0;
-            }
-
-            if (dashVelocity.y > 0) {
-                dashVelocity.y -= decel;
-                if (dashVelocity.y < 0) dashVelocity.y = 0;
-            } else if (dashVelocity.y < 0) {
-                dashVelocity.y += decel;
-                if (dashVelocity.y > 0) dashVelocity.y = 0;
-            }
-        }
-
     }
 
     public int getPlayerNumber() {
@@ -133,5 +82,60 @@ public class Player extends Entity {
 
     public void setInHand(int inHand) {
         this.inHand = inHand;
+    }
+
+    private void drawPlayer() {
+        boolean flipX = Gdx.input.getX() < Gdx.graphics.getWidth() / 2;
+
+        // Player draw
+        // Base
+        sm.draw(getX(), getY(), getWidth(), getHeight(), 0, flipX, texture);
+
+        // Eyes
+        mouseWorld.set(Gdx.input.getX(), Gdx.input.getY(), 0f);
+        vm.getWorldCamera().unproject(mouseWorld);
+
+        float cx = getX() + getWidth() * 0.5f;
+        float cy = getY() + getHeight() * 0.5f;
+
+        toMouse.set(mouseWorld.x - cx, mouseWorld.y - cy);
+
+        float maxEyeOffsetPx = 0.6f;
+        float pixelsPerUnit = 1f;
+        float maxEyeOffsetWorld = maxEyeOffsetPx / pixelsPerUnit;
+        if (toMouse.len2() > 0.0001f) toMouse.nor().scl(maxEyeOffsetWorld);
+        else toMouse.setZero();
+
+        sm.draw(getX() + toMouse.x, getY() + toMouse.y, getWidth(), getHeight(), 0, flipX, "player_eyes");
+
+
+
+        sm.renderSpotlight(getX(), getY(), 300f, Color.WHITE, 0.5f);
+    }
+
+    private void handleDashing() {
+        // Dashing
+        if (!dashVelocity.isZero()) {
+            this.x += dashVelocity.x * Gdx.graphics.getDeltaTime() * 60f;
+            this.y += dashVelocity.y * Gdx.graphics.getDeltaTime() * 60f;
+
+
+
+            if (dashVelocity.x > 0) {
+                dashVelocity.x -= decel;
+                if (dashVelocity.x < 0) dashVelocity.x = 0;
+            } else if (dashVelocity.x < 0) {
+                dashVelocity.x += decel;
+                if (dashVelocity.x > 0) dashVelocity.x = 0;
+            }
+
+            if (dashVelocity.y > 0) {
+                dashVelocity.y -= decel;
+                if (dashVelocity.y < 0) dashVelocity.y = 0;
+            } else if (dashVelocity.y < 0) {
+                dashVelocity.y += decel;
+                if (dashVelocity.y > 0) dashVelocity.y = 0;
+            }
+        }
     }
 }

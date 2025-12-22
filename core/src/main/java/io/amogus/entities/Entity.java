@@ -37,11 +37,11 @@ public abstract class Entity {
         prevPos = new Vector2(getX(), getY());
         inventory = new HashMap<>();
 
-        sm = SpriteManager.getInstance();
-        svm = ServerManager.getInstance();
-        lm = LevelManager.getInstance();
-        pm = ParticleManager.getInstance();
-        vm = ViewportManager.getInstance();
+        sm = Managers.sm;
+        svm = Managers.svm;
+        lm = Managers.lm;
+        pm = Managers.pm;
+        vm = Managers.vm;
     }
 
     public Entity(float x, float y, float rotation, String texture) {
@@ -53,11 +53,11 @@ public abstract class Entity {
         prevPos = new Vector2(getX(), getY());
         inventory = new HashMap<>();
 
-        sm = SpriteManager.getInstance();
-        svm = ServerManager.getInstance();
-        lm = LevelManager.getInstance();
-        pm = ParticleManager.getInstance();
-        vm = ViewportManager.getInstance();
+        sm = Managers.sm;
+        svm = Managers.svm;
+        lm = Managers.lm;
+        pm = Managers.pm;
+        vm = Managers.vm;
     }
 
     public Entity(float x, float y, String texture, int health , int damage, float speed) {
@@ -70,11 +70,11 @@ public abstract class Entity {
         prevPos = new Vector2(getX(), getY());
         inventory = new HashMap<>();
 
-        sm = SpriteManager.getInstance();
-        svm = ServerManager.getInstance();
-        lm = LevelManager.getInstance();
-        pm = ParticleManager.getInstance();
-        vm = ViewportManager.getInstance();
+        sm = Managers.sm;
+        svm = Managers.svm;
+        lm = Managers.lm;
+        pm = Managers.pm;
+        vm = Managers.vm;
     }
 
     public abstract void updateWorld();

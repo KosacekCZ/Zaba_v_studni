@@ -18,10 +18,9 @@ public class LevelManager {
 
     private LevelManager() {
         gamestates = new HashMap<>();
-        registerGameStates();
     }
 
-    private void registerGameStates() {
+    public void registerGameStates() {
         addGameState(new MainMenu(this));
         addGameState(new Lobby(this));
         addGameState(new Game(this));

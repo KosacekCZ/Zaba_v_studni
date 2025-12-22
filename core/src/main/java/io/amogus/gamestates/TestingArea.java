@@ -9,11 +9,11 @@ import io.amogus.entities.Player;
 import io.amogus.leveleditor.Region;
 import io.amogus.managers.EntityManager;
 import io.amogus.managers.LevelManager;
+import io.amogus.managers.Managers;
 import io.amogus.managers.TextManager;
+import io.socket.client.Manager;
 
 public class TestingArea extends Level {
-
-    private static EntityManager em;
     private final int worldSize = 256;
     private Player p;
     private final Input in = Gdx.input;
@@ -21,7 +21,6 @@ public class TestingArea extends Level {
 
     public TestingArea(LevelManager lm) {
         super(E_Gamestate.TESTING, lm);
-        em = EntityManager.getInstance();
         p = em.getLocalPlayer();
         setup();
         setBounds(new Region(-worldSize, -worldSize, worldSize, worldSize));

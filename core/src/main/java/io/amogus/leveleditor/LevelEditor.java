@@ -8,6 +8,7 @@ import com.badlogic.gdx.math.Vector2;
 import io.amogus.gamestates.E_Gamestate;
 import io.amogus.gamestates.Level;
 import io.amogus.managers.LevelManager;
+import io.amogus.managers.Managers;
 import io.amogus.managers.TextManager;
 import io.amogus.managers.ViewportManager;
 
@@ -16,7 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class LevelEditor extends Level {
-    private final ViewportManager vm = ViewportManager.getInstance();
+    private final ViewportManager vm = Managers.vm;
 
     private Vector2 mouseDragStartVec;
     private Action action;

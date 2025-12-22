@@ -2,6 +2,7 @@ package io.amogus.items;
 
 import io.amogus.entities.Entity;
 import io.amogus.managers.EntityManager;
+import io.amogus.managers.Managers;
 import io.amogus.managers.SpriteManager;
 import io.amogus.managers.ViewportManager;
 
@@ -29,9 +30,9 @@ public abstract class Item {
         this.h = h;
         this.texture = texture;
         this.rotation = 0;
-        sm = SpriteManager.getInstance();
-        vm = ViewportManager.getInstance();
-        em = EntityManager.getInstance();
+        sm = Managers.sm;
+        vm = Managers.vm;
+        em = Managers.em;
     }
 
     public abstract void updateWorld();

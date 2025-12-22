@@ -25,7 +25,7 @@ public class EntityManager implements io.amogus.managers.IEntityEvents {
     }
 
     private EntityManager() {
-        svm = ServerManager.getInstance();
+        svm = Managers.svm;
 
         entities = new ArrayList<Entity>();
         tempBuffer = new ArrayList<Entity>();

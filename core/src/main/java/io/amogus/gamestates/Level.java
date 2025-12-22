@@ -17,6 +17,7 @@ public abstract class Level extends InputAdapter {
     protected static ServerManager svm;
     protected static LevelManager lm;
     protected static ParticleManager pm;
+    protected static EntityManager em;
 
     private float uiScale;
     private float uiOffsetX;
@@ -32,10 +33,11 @@ public abstract class Level extends InputAdapter {
         this.state = state;
         scrollDeltaY = 0f;
         scrollDeltaX = 0f;
-        sm = SpriteManager.getInstance();
-        vm = ViewportManager.getInstance();
-        svm = ServerManager.getInstance();
-        pm = ParticleManager.getInstance();
+        sm = Managers.sm;
+        vm = Managers.vm;
+        svm = Managers.svm;
+        pm = Managers.pm;
+        em = Managers.em;
 
     }
 

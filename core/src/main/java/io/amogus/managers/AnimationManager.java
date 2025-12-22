@@ -11,7 +11,7 @@ public class AnimationManager {
         if (instance == null) instance = new AnimationManager();
         return instance;
     }
-    private final SpriteManager sm = SpriteManager.getInstance();
+    private final SpriteManager sm = Managers.sm;
 
 
     private static final float MONITOR_FPS = Gdx.graphics.getFramesPerSecond();

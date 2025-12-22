@@ -10,12 +10,13 @@ import io.jetbeans.GameServer;
 import org.w3c.dom.Text;
 
 public class Main extends ApplicationAdapter {
-    private static SpriteManager sm;
-    private static LevelManager lm;
-    private static ViewportManager vm;
-    private static TextureManager tm;
-    private static ServerManager svm;
-
+    /*
+    private static final SpriteManager sm = Managers.sm;
+    private static final LevelManager lm = Managers.lm;
+    private static final ViewportManager vm = Managers.vm;
+    private static final TextureManager tm = Managers.tm;
+    private static final ServerManager svm = Managers.svm;
+*/
     private final GameServer gameServer;
 
     public Main(GameServer gameServer) {
@@ -25,16 +26,14 @@ public class Main extends ApplicationAdapter {
 
     @Override
     public void create() {
-        sm = SpriteManager.getInstance();
-        lm =  LevelManager.getInstance();
-        vm =  ViewportManager.getInstance();
-        tm =  TextureManager.getInstance();
-        svm = ServerManager.getInstance();
+        Managers.init();
 
-        tm.loadTextures();
-        lm.setGameState(E_Gamestate.TESTING);
+        Managers.tm.loadTextures();
 
-        sm.setGlobalIllumination(0.6f);
+        Managers.lm.registerGameStates();
+        Managers.lm.setGameState(E_Gamestate.TESTING);
+
+        Managers.sm.setGlobalIllumination(0.6f);
     }
 
     @Override
@@ -44,28 +43,28 @@ public class Main extends ApplicationAdapter {
         }
         ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
 
-        sm.setWorldProjection(vm.getWorldCombined());
-        sm.setUiProjection(vm.getUiCombined());
+        Managers.sm.setWorldProjection(Managers.vm.getWorldCombined());
+        Managers.sm.setUiProjection(Managers.vm.getUiCombined());
 
-        lm.handleInput();
+        Managers.lm.handleInput();
 
         // World drawing
-        sm.beginWorld();
-        lm.updateWorld();
-        sm.end();
+        Managers.sm.beginWorld();
+        Managers.lm.updateWorld();
+        Managers.sm.end();
 
         // Screen drawing
-        sm.beginScreen();
-        lm.updateScreen();
-        sm.end();
+        Managers.sm.beginScreen();
+        Managers.lm.updateScreen();
+        Managers.sm.end();
 
 
     }
 
     @Override
     public void dispose() {
-        sm.dispose();
-        svm.disconnectSocket();
+        Managers.sm.dispose();
+        Managers.svm.disconnectSocket();
         if (gameServer != null) gameServer.stop();
 
         java.util.Map<Thread, StackTraceElement[]> all = Thread.getAllStackTraces();
@@ -77,8 +76,8 @@ public class Main extends ApplicationAdapter {
             if (n.contains("OkHttp Dispatcher") || n.startsWith("Timer-") || n.contains("globalEventExecutor")) {
                 System.out.println("=== " + n + " state=" + t.getState() + " ===");
                 StackTraceElement[] trace = e.getValue();
-                for (int i = 0; i < trace.length; i++) {
-                    System.out.println("  at " + trace[i]);
+                for (StackTraceElement stackTraceElement : trace) {
+                    System.out.println("  at " + stackTraceElement);
                 }
             }
         }
@@ -87,7 +86,7 @@ public class Main extends ApplicationAdapter {
 
     @Override
     public void resize(int width, int height) {
-        vm.resize(width, height);
+        Managers.vm.resize(width, height);
         SpriteManager.getInstance().resize(width, height);
 
     }
