@@ -27,7 +27,7 @@ public class Pistol extends Item {
         sm.draw(owner.getX(), owner.getY(), 32f, 32f, rotation - (flipX ? 135f : 45f), flipX, texture);
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE) || Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
-            em.spawnEntity(new Projectile(owner.getX() + 16f, owner.getY() + 16f, rotation, "projectile"));
+            em.spawnEntity(new Projectile(owner.getX() + 16f, owner.getY() + 16f, 15, rotation, "projectile", 1));
         }
     }
 

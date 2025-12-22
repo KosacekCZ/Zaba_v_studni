@@ -12,11 +12,21 @@ public class Projectile extends Entity {
     private int maxBounces = 2;
 
 
-    public Projectile(float x, float y, float rotation, String texture) {
+    public Projectile(float x, float y, float speed, float rotation, String texture) {
         super(x, y, rotation, texture);
         this.levelBounds = lm.getCurrentState().getBounds();
         this.speed = 60f * 10 * Gdx.graphics.getDeltaTime();
         this.projectileSpin = rotation;
+        this.speed = speed * Gdx.graphics.getDeltaTime() * 60;
+    }
+
+    public Projectile(float x, float y, float speed, float rotation, String texture, int maxBounces) {
+        super(x, y, rotation, texture);
+        this.levelBounds = lm.getCurrentState().getBounds();
+        this.speed = 60f * 10 * Gdx.graphics.getDeltaTime();
+        this.projectileSpin = rotation;
+        this.maxBounces = maxBounces;
+        this.speed = speed * Gdx.graphics.getDeltaTime() * 60;
     }
 
     public void updateScreen() {
@@ -26,7 +36,7 @@ public class Projectile extends Entity {
     @Override
     public void updateWorld() {
         //pm.addParticle(new TraceParticle(x + 4, y + 4, 2, 2, 4));
-        sm.renderSpotlight(x + 4f, y + 4f, 5f, Color.ORANGE, 2.0f);
+        sm.renderSpotlight(x + 4f, y + 4f, 8f, new Color(0.7f, 0.7f, 0.4f, 1), 5.0f);
 
         projectileSpin = (projectileSpin + 16f) % 360;
         sm.draw(x, y, 8f, 8f, projectileSpin, texture);

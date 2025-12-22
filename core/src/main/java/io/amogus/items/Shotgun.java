@@ -19,7 +19,6 @@ public class Shotgun extends Item {
         modifiers.put(Modifiers.SHOTGUN_BULLETS, 1);
         modifiers.put(Modifiers.SHOTGUN_BOUNCE, 1);
         modifiers.put(Modifiers.SHOTGUN_CHOKE, 5);
-
     }
 
     @Override
@@ -49,9 +48,7 @@ public class Shotgun extends Item {
 
         // Shooting
         if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE) || Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
-            int extra = modifiers.containsKey(Modifiers.SHOTGUN_BULLETS)
-                ? modifiers.get(Modifiers.SHOTGUN_BULLETS)
-                : 0;
+            int extra = modifiers.getOrDefault(Modifiers.SHOTGUN_BULLETS, 0);
 
             int count = (extra * 2) + 3;
 
@@ -68,7 +65,7 @@ public class Shotgun extends Item {
 
             for (int i = 0; i < count; i++) {
                 float rot = start + i * step;
-                em.spawnEntity(new Projectile(owner.getX() + 16f, owner.getY() + 16f, rot, "projectile"));
+                em.spawnEntity(new Projectile(owner.getX() + 16f, owner.getY() + 16f, 10, rot, "projectile", 1));
             }
         }
     }

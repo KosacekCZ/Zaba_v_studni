@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import io.amogus.items.Minigun;
 import io.amogus.items.Pistol;
 import io.amogus.items.Shotgun;
 import io.amogus.managers.Managers;
@@ -30,7 +31,8 @@ public class Player extends Entity {
 
         inventory.put(10, new Shotgun(this));
         inventory.put(11, new Pistol(this));
-        inHand = 11;
+        inventory.put(13, new Minigun(this));
+        inHand = 13;
         inventory.get(inHand).setActive(true);
 
 
@@ -111,10 +113,22 @@ public class Player extends Entity {
         float maxEyeOffsetPx = 0.6f;
         float pixelsPerUnit = 1f;
         float maxEyeOffsetWorld = maxEyeOffsetPx / pixelsPerUnit;
-        if (toMouse.len2() > 0.0001f) toMouse.nor().scl(maxEyeOffsetWorld);
-        else toMouse.setZero();
+
+        float deadzonePx = 12f;
+        float deadzoneWorld = deadzonePx / pixelsPerUnit;
+
+        float len = toMouse.len();
+
+        if (len <= deadzoneWorld) {
+            toMouse.setZero();
+        } else {
+            float t = (len - deadzoneWorld) / (len);
+            toMouse.scl(t);
+            if (toMouse.len2() > 0.0001f) toMouse.nor().scl(maxEyeOffsetWorld);
+        }
 
         sm.draw(getX() + toMouse.x, getY() + toMouse.y, getWidth(), getHeight(), 0, flipX, "player_eyes");
+
 
 
 
@@ -122,33 +136,28 @@ public class Player extends Entity {
     }
 
     private void handleDashing() {
-        // Dashing
+        float dt = Gdx.graphics.getDeltaTime();
+
         if (!dashVelocity.isZero()) {
-            this.isDashing = true;
-            this.x += dashVelocity.x * Gdx.graphics.getDeltaTime() * 60f;
-            this.y += dashVelocity.y * Gdx.graphics.getDeltaTime() * 60f;
+            isDashing = true;
 
-            if (dashVelocity.x > 0) {
-                dashVelocity.x -= decel;
-                if (dashVelocity.x < 0) dashVelocity.x = 0;
-            } else if (dashVelocity.x < 0) {
-                dashVelocity.x += decel;
-                if (dashVelocity.x > 0) dashVelocity.x = 0;
-            }
+            x += dashVelocity.x * dt * 60;
+            y += dashVelocity.y * dt * 60;
 
-            if (dashVelocity.y > 0) {
-                dashVelocity.y -= decel;
-                if (dashVelocity.y < 0) dashVelocity.y = 0;
-            } else if (dashVelocity.y < 0) {
-                dashVelocity.y += decel;
-                if (dashVelocity.y > 0) dashVelocity.y = 0;
-            }
+            float decelStep = decel * dt * 60;
+
+            if (dashVelocity.x > 0f) dashVelocity.x = Math.max(0f, dashVelocity.x - decelStep);
+            else if (dashVelocity.x < 0f) dashVelocity.x = Math.min(0f, dashVelocity.x + decelStep);
+
+            if (dashVelocity.y > 0f) dashVelocity.y = Math.max(0f, dashVelocity.y - decelStep);
+            else if (dashVelocity.y < 0f) dashVelocity.y = Math.min(0f, dashVelocity.y + decelStep);
+
             Managers.pm.addParticle(new DashParticle(x, y, 16, 16, 16));
-
         } else {
             isDashing = false;
         }
     }
+
 
     public void setMoving(boolean moving) {
         this.isMoving = moving;
