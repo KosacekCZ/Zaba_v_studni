@@ -2,6 +2,7 @@ package io.amogus.managers;
 
 public final class Managers {
     public static AnimationManager am;
+    public static AudioManager aum;
     public static EntityManager em;
     public static LevelManager lm;
     public static ParticleManager pm;
@@ -9,6 +10,7 @@ public final class Managers {
     public static SpriteManager sm;
     public static ViewportManager vm;
     public static TextureManager tm;
+
 
     public static void init() {
         tm = TextureManager.getInstance();
@@ -19,6 +21,7 @@ public final class Managers {
         am = AnimationManager.getInstance();
         svm = ServerManager.getInstance();
         em = EntityManager.getInstance();
+        aum = AudioManager.getInstance();
     }
 
     private Managers() {}
