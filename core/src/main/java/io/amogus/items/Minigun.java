@@ -42,6 +42,7 @@ public class Minigun extends Item{
             windupTimer = 0f;
             windLoopStarted = false;
             windupId = Managers.aum.play("minigun_windup");
+            Managers.aum.setVolume("minigun_windup", windupId, Managers.aum.getGlobalVolume());
 
         }
 
@@ -50,6 +51,7 @@ public class Minigun extends Item{
 
             if (!windLoopStarted && windupTimer >= 0.5f) {
                 windLoopId = Managers.aum.loop("minigun_wind_loop");
+                Managers.aum.setVolume("minigun_windup_loop", windLoopId, Managers.aum.getGlobalVolume());
                 windLoopStarted = true;
             }
 
@@ -58,6 +60,7 @@ public class Minigun extends Item{
 
             if (lmb && !wasLmb) {
                 firingId = Managers.aum.loop("minigun_firing");
+                Managers.aum.setVolume("minigun_firing", firingId, Managers.aum.getGlobalVolume());
             }
             if (!lmb && wasLmb) {
                 Managers.aum.stop("minigun_firing", firingId);

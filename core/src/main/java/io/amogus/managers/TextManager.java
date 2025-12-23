@@ -26,9 +26,9 @@ public class TextManager {
         parameter.borderWidth = 0;
         parameter.color = color;
         if (shadow) {
-            parameter.shadowOffsetX = 2;
-            parameter.shadowOffsetY = 2;
-            parameter.shadowColor = new Color(0.2f, 0.2f, 0.2f, 0.85f);
+            parameter.shadowOffsetX = 8;
+            parameter.shadowOffsetY = 8;
+            parameter.shadowColor = Color.BLACK;
         }
         BitmapFont customFont = generator.generateFont(parameter);
         generator.dispose();
