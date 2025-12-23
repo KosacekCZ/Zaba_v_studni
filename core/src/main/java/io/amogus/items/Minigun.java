@@ -2,6 +2,7 @@ package io.amogus.items;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.math.Vector2;
 import io.amogus.Main;
 import io.amogus.entities.Entity;
 import io.amogus.entities.Projectile;
@@ -88,9 +89,9 @@ public class Minigun extends Item{
 
         wasRmb = rmb;
         wasLmb = lmb;
+
+        drawHands(flipX, rotation, new Vector2(owner.getX(), owner.getY() - 4f), new Vector2(0, 6), new Vector2(8, 6));
     }
-
-
 
     @Override
     public void updateScreen() {

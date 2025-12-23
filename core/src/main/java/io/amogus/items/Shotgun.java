@@ -2,6 +2,7 @@ package io.amogus.items;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.math.Vector2;
 import io.amogus.entities.Entity;
 import io.amogus.entities.Projectile;
 
@@ -68,6 +69,7 @@ public class Shotgun extends Item {
                 em.spawnEntity(new Projectile(owner.getX() + 16f, owner.getY() + 16f, 10, rot, "projectile", 1));
             }
         }
+        drawHands(flipX, rotation, new Vector2(owner.getX(), owner.getY()), new Vector2(-1, -2), new Vector2(12, -2));
     }
 
     @Override

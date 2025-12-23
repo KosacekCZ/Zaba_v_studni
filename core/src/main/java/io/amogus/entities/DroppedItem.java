@@ -10,7 +10,7 @@ public class DroppedItem extends Entity {
     @Override
     public void updateWorld() {
         t = (t < 60? ++t : 0);
-        sm.draw(x, (float)(y + Math.sin(t / 4) * 10f), 32, 32, texture);
+        sm.draw(x, (float)(y + Math.sin(t / 10) * 2f), 32, 32, texture);
     }
 
     @Override

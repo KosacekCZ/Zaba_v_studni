@@ -32,7 +32,7 @@ public class Player extends Entity {
         inventory.put(10, new Shotgun(this));
         inventory.put(11, new Pistol(this));
         inventory.put(13, new Minigun(this));
-        inHand = 13;
+        inHand = 10;
         inventory.get(inHand).setActive(true);
 
 
