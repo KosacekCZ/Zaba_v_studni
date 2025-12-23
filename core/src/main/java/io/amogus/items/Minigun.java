@@ -63,7 +63,7 @@ public class Minigun extends Item{
                 firingId = -1L;
             }
 
-            if (lmb) {
+            if (lmb && windLoopStarted) {
                 float spreadDeg = 6f;
                 float r = rotation + com.badlogic.gdx.math.MathUtils.random(-spreadDeg, spreadDeg);
                 em.spawnEntity(new Projectile(owner.getX() + 12f, owner.getY() + 8f, 15, r, "projectile", 1));
