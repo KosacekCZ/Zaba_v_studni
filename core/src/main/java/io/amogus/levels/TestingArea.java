@@ -1,4 +1,4 @@
-package io.amogus.gamestates;
+package io.amogus.levels;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -7,11 +7,8 @@ import com.badlogic.gdx.math.Vector2;
 import io.amogus.entities.DroppedItem;
 import io.amogus.entities.Player;
 import io.amogus.leveleditor.Region;
-import io.amogus.managers.EntityManager;
 import io.amogus.managers.LevelManager;
-import io.amogus.managers.Managers;
 import io.amogus.managers.TextManager;
-import io.socket.client.Manager;
 
 public class TestingArea extends Level {
     private final int worldSize = 256;

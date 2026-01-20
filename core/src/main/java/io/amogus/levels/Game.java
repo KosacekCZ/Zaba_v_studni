@@ -1,4 +1,4 @@
-package io.amogus.gamestates;
+package io.amogus.levels;
 
 import com.badlogic.gdx.graphics.Color;
 import io.amogus.managers.LevelManager;

@@ -4,19 +4,12 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.utils.ScreenUtils;
-import io.amogus.gamestates.*;
+import io.amogus.entities.enemies.Enemy;
+import io.amogus.levels.*;
 import io.amogus.managers.*;
 import io.jetbeans.GameServer;
-import org.w3c.dom.Text;
 
 public class Main extends ApplicationAdapter {
-    /*
-    private static final SpriteManager sm = Managers.sm;
-    private static final LevelManager lm = Managers.lm;
-    private static final ViewportManager vm = Managers.vm;
-    private static final TextureManager tm = Managers.tm;
-    private static final ServerManager svm = Managers.svm;
-*/
     private final GameServer gameServer;
 
     public Main(GameServer gameServer) {
@@ -34,8 +27,10 @@ public class Main extends ApplicationAdapter {
         Managers.lm.setup();
         Managers.lm.setGameState(E_Gamestate.TESTING);
 
-
         Managers.sm.setGlobalIllumination(0.6f);
+
+
+        Managers.em.spawnEntity(new Enemy(50, 50, "poo", 100, 10, 10f));
     }
 
     @Override

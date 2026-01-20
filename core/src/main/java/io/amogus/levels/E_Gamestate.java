@@ -1,4 +1,4 @@
-package io.amogus.gamestates;
+package io.amogus.levels;
 
 public enum E_Gamestate {
     LOADINGSCREEN,

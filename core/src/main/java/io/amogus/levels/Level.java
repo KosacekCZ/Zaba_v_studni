@@ -1,4 +1,4 @@
-package io.amogus.gamestates;
+package io.amogus.levels;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputAdapter;

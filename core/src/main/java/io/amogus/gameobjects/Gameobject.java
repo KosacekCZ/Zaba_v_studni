@@ -1,7 +1,6 @@
 package io.amogus.gameobjects;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import io.amogus.gamestates.Game;
 
 public abstract class Gameobject {
     protected float x;

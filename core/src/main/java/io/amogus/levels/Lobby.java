@@ -1,4 +1,4 @@
-package io.amogus.gamestates;
+package io.amogus.levels;
 
 import io.amogus.managers.LevelManager;
 

@@ -27,7 +27,7 @@ public class ViewportManager {
 
     private ViewportManager() {
         worldCamera = new OrthographicCamera();
-        worldViewport = new ExtendViewport(WORLD_WIDTH, WORLD_HEIGHT, worldCamera);
+        worldViewport = new ExtendViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), worldCamera);
         worldViewport.apply();
         worldCamera.position.set(WORLD_WIDTH / 2f, WORLD_HEIGHT / 2f, 0);
 

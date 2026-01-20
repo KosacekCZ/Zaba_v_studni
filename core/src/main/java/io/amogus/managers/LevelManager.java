@@ -1,7 +1,7 @@
 package io.amogus.managers;
 
 import com.badlogic.gdx.Gdx;
-import io.amogus.gamestates.*;
+import io.amogus.levels.*;
 import io.amogus.leveleditor.LevelEditor;
 
 import java.util.HashMap;

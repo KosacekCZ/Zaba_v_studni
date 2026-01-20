@@ -51,7 +51,7 @@ public class Minigun extends Item{
 
             if (!windLoopStarted && windupTimer >= 0.5f) {
                 windLoopId = Managers.aum.loop("minigun_wind_loop");
-                Managers.aum.setVolume("minigun_windup_loop", windLoopId, Managers.aum.getGlobalVolume());
+                //Managers.aum.setVolume("minigun_windup_loop", windLoopId, Managers.aum.getGlobalVolume());
                 windLoopStarted = true;
             }
 

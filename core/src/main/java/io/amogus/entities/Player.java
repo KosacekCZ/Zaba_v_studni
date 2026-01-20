@@ -35,7 +35,6 @@ public class Player extends Entity {
         inHand = 10;
         inventory.get(inHand).setActive(true);
 
-
     }
 
     public void updateScreen() {
