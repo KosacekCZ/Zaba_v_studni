@@ -24,7 +24,7 @@ public class TraceParticle extends Particle
         float drawX = x + (w - newW) * 0.5f;
         float drawY = y + (h - newH) * 0.5f;
 
-        sm.drawRect(drawX, drawY, newW, newH, new Color(1f, 1f, 0.5f, alpha));
+        sm.drawRect(drawX, drawY, newW, newH, true, new Color(1f, 1f, 0.5f, alpha));
 
         lifespan -= dt * 100;
         if (lifespan <= 0) Destroy();

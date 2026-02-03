@@ -99,21 +99,57 @@ public class SpriteManager {
         lighting.renderSpotlight(x, y, radius, color, intensity);
     }
 
+    /**
+     * Generic draw method
+     * @param x
+     * @param y
+     * @param w
+     * @param h
+     * @param textureName
+     */
     public void draw(float x, float y, float w, float h, String textureName) {
         if (mode != Mode.WORLD) throw new IllegalStateException("draw() called outside world pass. Use beginWorld() before draw(), or drawScreen().");
         batch.draw(textures.get(textureName), x, y, w, h);
     }
 
+    /**
+     * Generic draw method
+     * @param x
+     * @param y
+     * @param w
+     * @param h
+     * @param rotation
+     * @param textureName
+     */
     public void draw(float x, float y, float w, float h, float rotation, String textureName) {
         if (mode != Mode.WORLD) throw new IllegalStateException("draw() called outside world pass. Use beginWorld() before draw(), or drawScreen().");
         batch.draw(new TextureRegion(textures.get(textureName)), x, y, w / 2f, h / 2f, w, h, 1f, 1f, rotation);
     }
 
+    /**
+     * Generic draw method
+     * @param x
+     * @param y
+     * @param w
+     * @param h
+     * @param rotation
+     * @param region
+     */
     public void draw(float x, float y, float w, float h, float rotation, TextureRegion region) {
         if (mode != Mode.WORLD) throw new IllegalStateException("draw() called outside world pass. Use beginWorld() before draw(), or drawScreen().");
         batch.draw(region, x, y, w / 2f, h / 2f, w, h, 1f, 1f, rotation);
     }
 
+    /**
+     * Generic draw method
+     * @param x
+     * @param y
+     * @param w
+     * @param h
+     * @param rotation
+     * @param flipX
+     * @param textureName
+     */
     public void draw(float x, float y, float w, float h, float rotation, boolean flipX, String textureName) {
         if (mode != Mode.WORLD) {
             throw new IllegalStateException("draw() called outside world pass. Use beginWorld() before draw(), or drawScreen().");
@@ -122,6 +158,16 @@ public class SpriteManager {
         batch.draw(r.getTexture(), x, y, w / 2f, h / 2f, w, h, 1f, 1f, rotation, 0, 0, r.getRegionWidth(), r.getRegionHeight(), flipX, false);
     }
 
+    /**
+     * Generic draw method
+     * @param x
+     * @param y
+     * @param w
+     * @param h
+     * @param rotation
+     * @param flipX
+     * @param region
+     */
     public void draw(float x, float y, float w, float h, float rotation, boolean flipX, TextureRegion region) {
         if (mode != Mode.WORLD) {
             throw new IllegalStateException("draw() called outside world pass. Use beginWorld() before draw(), or drawScreen().");
@@ -146,9 +192,10 @@ public class SpriteManager {
         sd.line(x, y, x2, y2, color);
     }
 
-    public void drawRect(float x, float y, float w, float h, Color color) {
+    public void drawRect(float x, float y, float w, float h, boolean fill, Color color) {
         if (mode != Mode.WORLD) throw new IllegalStateException("drawRect() called outside world pass. Use beginWorld() before drawRect().");
-        sd.filledRectangle(x, y, w, h, color);
+        if (fill) sd.filledRectangle(x, y, w, h, color);
+        if (!fill) sd.rectangle(x, y, w, h, color);
     }
 
     public void drawScreen(float x, float y, float w, float h, String textureName) {
