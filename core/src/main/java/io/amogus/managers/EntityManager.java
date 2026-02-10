@@ -92,4 +92,22 @@ public class EntityManager implements io.amogus.managers.IEntityEvents {
     public Player getLocalPlayer() {
         return localPlayer;
     }
+
+    public Player getNearestPlayer(float ex, float ey) {
+        Player nearest = null;
+        float nearestDist2 = Float.MAX_VALUE;
+
+        for (Player p : players.values()) {
+            float dx = p.getX() - ex;
+            float dy = p.getY() - ey;
+            float dist2 = dx * dx + dy * dy;
+
+            if (dist2 < nearestDist2) {
+                nearestDist2 = dist2;
+                nearest = p;
+            }
+        }
+        return nearest;
+    }
+
 }

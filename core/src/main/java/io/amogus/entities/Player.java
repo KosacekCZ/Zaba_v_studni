@@ -45,6 +45,7 @@ public class Player extends Entity {
         handleDashing();
         drawPlayer();
         inventory.get(inHand).updateWorld();
+        clampToRegion(Managers.lm.getCurrentState().getBounds());
     }
 
     public int getPlayerNumber() {

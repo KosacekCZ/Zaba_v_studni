@@ -22,6 +22,12 @@ public class Region {
         this.h = (float) Math.ceil(h);
     }
 
+    public float minX() { return x; }
+    public float minY() { return y; }
+    public float maxX() { return x + w; }
+    public float maxY() { return y + h; }
+
+
     @Override
     public String toString() {
         return "Region(" + x + ", " + y + ", " + w + ", " + h + ")";

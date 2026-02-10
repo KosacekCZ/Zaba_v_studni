@@ -3,6 +3,7 @@ package io.amogus.entities;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 import io.amogus.items.Item;
+import io.amogus.leveleditor.Region;
 import io.amogus.managers.*;
 
 import java.util.HashMap;
@@ -82,6 +83,12 @@ public abstract class Entity {
     public abstract void updateScreen();
 
     public abstract void onCollide(Entity e);
+
+    public void clampToRegion(Region r) {
+        x = Math.max(r.minX(), Math.min(x, r.maxX() - w));
+        y = Math.max(r.minY(), Math.min(y, r.maxY() - h));
+    }
+
 
     public void Destroy() {
         this.isDestroy = true;
