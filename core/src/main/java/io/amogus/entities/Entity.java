@@ -23,6 +23,7 @@ public abstract class Entity {
     protected boolean isDestroy;
     protected HashMap<Integer, Item> inventory;
     protected int inHand;
+    protected float radius;
 
     protected SpriteManager sm;
     protected ServerManager svm;
@@ -146,6 +147,12 @@ public abstract class Entity {
     public void setH(float h) {
         this.h = h;
     }
+
+    public float getRadius() { return radius; }
+
+    public float getCenterX() { return x + w * 0.5f; }
+
+    public float getCenterY() { return y + h * 0.5f; }
 
     public Vector2 getPos() {
         return pos;

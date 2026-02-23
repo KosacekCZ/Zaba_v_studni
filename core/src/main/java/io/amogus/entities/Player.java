@@ -49,54 +49,13 @@ public class Player extends Entity {
         clampToRegion(Managers.lm.getCurrentState().getBounds());
     }
 
-    public int getPlayerNumber() {
-        return playerNumber;
-    }
-
-    public String getPlayerName() {
-        return playerName;
-    }
-
-    public void setPlayerName(String playerName) {
-        this.playerName = playerName;
-    }
-
-    public String getPlayerId() {
-        return playerId;
-    }
-
-    public void setPlayerId(String value) {
-        playerId = value;
-    }
-
-    public void setPlayerNumber(int playerNumber) {
-        this.playerNumber = playerNumber;
-    }
-
-
-    public void onCollide(Entity e) {
-
-    }
-
-    public Vector2 getDashVelocity() {
-        return dashVelocity;
-    }
-
-    public void setDashVelocity(Vector2 velocity) {
-        this.dashVelocity = velocity;
-    }
-
-    public void setInHand(int inHand) {
-        this.inHand = inHand;
-    }
-
     private void drawPlayer() {
         boolean flipX = Gdx.input.getX() < Gdx.graphics.getWidth() / 2;
 
         // Player draw
         // Base
         if (isMoving) {
-            sm.draw(getX(), getY(), getWidth(), getHeight(), 0, flipX, Managers.am.animateSprite(6, Gdx.graphics.getDeltaTime(), "player_base_animated"));
+            sm.draw(getX(), getY(), getWidth(), getHeight(), 0, flipX, Managers.am.animateSprite(3, Gdx.graphics.getDeltaTime(), "player_base_animated"));
         } else if (isDashing) {
             sm.draw(getX(), getY(), getWidth(), getHeight(), 0, flipX, "player_base_dash");
         } else {
@@ -136,6 +95,46 @@ public class Player extends Entity {
         sm.renderSpotlight(getX(), getY(), 300f, Color.WHITE, 0.5f);
     }
 
+    public int getPlayerNumber() {
+        return playerNumber;
+    }
+
+    public String getPlayerName() {
+        return playerName;
+    }
+
+    public void setPlayerName(String playerName) {
+        this.playerName = playerName;
+    }
+
+    public String getPlayerId() {
+        return playerId;
+    }
+
+    public void setPlayerId(String value) {
+        playerId = value;
+    }
+
+    public void setPlayerNumber(int playerNumber) {
+        this.playerNumber = playerNumber;
+    }
+
+    public Vector2 getDashVelocity() {
+        return dashVelocity;
+    }
+
+    public void setDashVelocity(Vector2 velocity) {
+        this.dashVelocity = velocity;
+    }
+
+    public void setInHand(int inHand) {
+        this.inHand = inHand;
+    }
+
+    public void setMoving(boolean moving) {
+        this.isMoving = moving;
+    }
+
     private void handleDashing() {
         float dt = Gdx.graphics.getDeltaTime();
 
@@ -163,8 +162,8 @@ public class Player extends Entity {
 
     }
 
-
-    public void setMoving(boolean moving) {
-        this.isMoving = moving;
+    public void onCollide(Entity e) {
+        System.out.println("Hit");
     }
+
 }

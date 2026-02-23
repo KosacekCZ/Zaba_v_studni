@@ -35,47 +35,56 @@ public class Projectile extends Entity {
 
     @Override
     public void updateWorld() {
-        //pm.addParticle(new TraceParticle(x + 4, y + 4, 2, 2, 4));
-        sm.renderSpotlight(x + 4f, y + 4f, 8f, new Color(0.7f, 0.7f, 0.4f, 1), 5.0f);
+        sm.renderSpotlight(x + 4f, y + 4f, 8f, new Color(0.7f, 0.7f, 0.4f, 1f), 5.0f);
 
-        projectileSpin = (projectileSpin + 16f) % 360;
+        projectileSpin = (projectileSpin + 16f) % 360f;
         sm.draw(x, y, 8f, 8f, projectileSpin, texture);
-        this.x += (float) Math.cos(Math.toRadians(this.rotation)) * speed;
-        this.y += (float) Math.sin(Math.toRadians(this.rotation)) * speed;
+
+        float dt = Gdx.graphics.getDeltaTime();
+        x += (float) Math.cos(Math.toRadians(rotation)) * speed;
+        y += (float) Math.sin(Math.toRadians(rotation)) * speed;
 
         float minX = levelBounds.x;
-        float maxX = levelBounds.w;
         float minY = levelBounds.y;
-        float maxY = levelBounds.h;
+        float maxX = levelBounds.x + levelBounds.w;
+        float maxY = levelBounds.y + levelBounds.h;
 
+        float pw = 8f;
+        float ph = 8f;
 
-        float w = 4f, h = 4f;
+        boolean hitVertical = false;
+        boolean hitHorizontal = false;
 
-        boolean hitVertical = false, hitHorizontal = false;
+        if (x < minX) {
+            x = minX;
+            hitVertical = true;
+        } else if (x + pw > maxX) {
+            x = maxX - pw;
+            hitVertical = true;
+        }
 
-        if (x < minX) { x = minX; hitVertical = true; }
-        else if (x + w > maxX) { x = maxX - w; hitVertical = true; }
-
-        if (y < minY) { y = minY; hitHorizontal = true; }
-        else if (y + h > maxY) { y = maxY - h; hitHorizontal = true; }
-
+        if (y < minY) {
+            y = minY;
+            hitHorizontal = true;
+        } else if (y + ph > maxY) {
+            y = maxY - ph;
+            hitHorizontal = true;
+        }
 
         if (hitVertical || hitHorizontal) {
             bounceCount++;
-            float angle = getRotation();
 
-            if (hitVertical) {
-                angle = 180f - angle;
-            }
-            if (hitHorizontal) {
-                angle = -angle;
-            }
+            float angle = rotation;
+            if (hitVertical) angle = 180f - angle;
+            if (hitHorizontal) angle = -angle;
+            angle = (angle % 360f + 360f) % 360f;
 
-            // normalize if you want: angle = (angle % 360f + 360f) % 360f;
             setRotation(angle);
-        }
 
-        if (bounceCount == maxBounces) Destroy();
+            if (bounceCount >= maxBounces) {
+                Destroy();
+            }
+        }
     }
 
     @Override

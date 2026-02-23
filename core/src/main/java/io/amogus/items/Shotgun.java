@@ -16,8 +16,8 @@ public class Shotgun extends Item {
     private long firingId = -1L;
     private long reloadId = -1L;
 
-    private int magCount = 5;
-    private int magCapacity = 5;
+    private int magCount = 50;
+    private int magCapacity = 50;
     private int ammoCount = 30;
 
     private boolean canFire = true;
@@ -98,7 +98,7 @@ public class Shotgun extends Item {
             // Projectile spawn
             for (int i = 0; i < count; i++) {
                 float rot = start + i * step;
-                em.spawnEntity(new Projectile(owner.getX() + 16f, owner.getY() + 16f, 10, rot, "projectile", 3));
+                em.spawnEntity(new Projectile(owner.getX() + 16f, owner.getY() + 16f, 20, rot, "projectile", 3));
             }
             this.magCount--;
             canFire = false;

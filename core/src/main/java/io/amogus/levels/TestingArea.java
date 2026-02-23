@@ -25,7 +25,7 @@ public class TestingArea extends Level {
         svm.connectSocket();
         svm.configSocketEvents();
         p = em.getLocalPlayer();
-        setBounds(new Region(-worldSize + 40f, -worldSize + 40f, (2 * worldSize) - 64f, (2 * worldSize) - 64f));
+        setBounds(new Region(-worldSize + 40f, -worldSize + 40f, (2 * worldSize) - 80f, (2 * worldSize) - 64f));
 
         em.spawnEntity(new DroppedItem(100, 100, "bullet_modifier"));
     }
