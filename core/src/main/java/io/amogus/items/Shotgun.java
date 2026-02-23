@@ -45,7 +45,7 @@ public class Shotgun extends Item {
         float scrCtrW = (float) Gdx.graphics.getWidth() / 2;
 
         // Draw magazine stat
-        sm.drawScreen(scrCtrW - (3 * textureSize + 32f), 32, textureSize, textureSize, "shotgun_shells");
+        sm.drawScreen(scrCtrW - (3 * textureSize + 32f), 32, textureSize, textureSize, "mag_ammo_shotgun_ui");
 
         TextManager.draw(magCount + "/" + magCapacity, 48, Color.WHITE, true, scrCtrW - (4 * textureSize ), 96);
 
@@ -71,6 +71,7 @@ public class Shotgun extends Item {
 
         handleUse();
         chamber();
+        reload();
 
         drawHands(flipX, rotation, new Vector2(owner.getX(), owner.getY()), new Vector2(-1, -2), new Vector2(secondHandXpos, -2));
     }
@@ -108,13 +109,17 @@ public class Shotgun extends Item {
             Managers.aum.setVolume("empty_mag", firingId, Managers.aum.getGlobalVolume());
         }
 
+        if (Gdx.input.isKeyJustPressed(Input.Keys.R)) {
+
+        }
+
+        // Mid-fire del
         if (!canFire && magCount >= 0 && !chambering) {
             chambering = true;
         }
     }
 
     private void chamber() {
-
         if (chambering && chamberingDur > 0) {
             float dt = Gdx.graphics.getDeltaTime();
             float speed = 6f;
@@ -138,6 +143,10 @@ public class Shotgun extends Item {
                 secondHandXpos = 12f - s * 4f;
             }
         }
+    }
+
+    private void reload() {
+
     }
 
     @Override
