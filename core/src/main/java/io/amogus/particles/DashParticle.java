@@ -26,7 +26,7 @@ public class DashParticle extends Particle {
         float drawX = x + (w - newW) * 0.5f;
         float drawY = y + (h - newH) * 0.5f;
 
-        sm.drawRect(x + 16f, y + 8f, newW, newH, new Color(0.8f, 0.8f, 0.8f, alpha));
+        sm.drawRect(x + 16f, y + 8f, newW, newH, true, new Color(0.8f, 0.8f, 0.8f, alpha));
 
         lifespan -= dt * 100;
         if (lifespan <= 0) Destroy();
