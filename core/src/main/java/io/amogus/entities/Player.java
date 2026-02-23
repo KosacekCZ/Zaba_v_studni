@@ -43,6 +43,7 @@ public class Player extends Entity {
 
     public void updateWorld() {
         handleDashing();
+        handleInput();
         drawPlayer();
         inventory.get(inHand).updateWorld();
     }
@@ -155,6 +156,10 @@ public class Player extends Entity {
         } else {
             isDashing = false;
         }
+    }
+
+    private void handleInput() {
+
     }
 
 
