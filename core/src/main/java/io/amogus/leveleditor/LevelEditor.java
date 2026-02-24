@@ -42,6 +42,8 @@ public class LevelEditor extends Level {
     private final float padding = m8;
     private final float pbw = bw + padding;
 
+    private Prop inHand;
+
 
 
     public LevelEditor(LevelManager lm) {
@@ -89,14 +91,17 @@ public class LevelEditor extends Level {
             new Button(2 * pbw, m16, tw, tw,  "background", () -> {
 
             }),
-            new Button(3 * pbw, m16, tw, tw,  "brick_wall", () -> {}),
+            new Button(3 * pbw, m16, tw, tw,  "brick_wall", () -> {
+                inHand = new Prop(0, 0, 32, 32, "brick_wall", 0);}),
             new Button(4 * pbw, m16, tw, tw,  "bricks_gray", () -> {}),
             new Button(5 * pbw, m16, tw, tw,  "bricks_gray_light", () -> {}),
             new Button(6 * pbw, m16, tw, tw,  "floor_1", () -> {}),
             new Button(7 * pbw, m16, tw, tw,  "outer_floor", () -> {}),
             new Button(8 * pbw, m16, tw, tw,  "outer_floor_2", () -> {}),
             new Button(9 * pbw, m16, tw, tw,  "outer_floor_3", () -> {}),
-            new Button(10 * pbw, m16, tw, tw,  "wall_corner", () -> {}),
+            new Button(10 * pbw, m16, tw, tw,  "wall_corner", () -> {
+                inHand = new Prop(0, 0, 128, 128, "brick_wall", 0);
+            }),
             new Button(11 * pbw, m16, tw, tw,  "wall_doorway", () -> {}),
             new Button(12 * pbw, m16, tw, tw,  "wall_straight", () -> {})
         ));
@@ -168,6 +173,146 @@ public class LevelEditor extends Level {
     }
 
     @Override
+    public void updateWorld() {
+        int worldSize = 1024;
+        // Grid
+        for (int i = -worldSize; i <= worldSize; i++) {
+            if (i%32 == 0) {
+                sm.drawLine(i, i, -worldSize, worldSize, Color.DARK_GRAY);
+                sm.drawLine(-worldSize, worldSize, i, i, Color.DARK_GRAY);
+            }
+
+            if (i%128 == 0 || i==0) {
+                TextManager.draw(String.valueOf(i), 8, Color.WHITE, false, i, 0);
+                TextManager.draw(String.valueOf(i), 8, Color.WHITE, false,0, i);
+            }
+        }
+
+        // Placeable highlight
+        if (inHand != null) {
+            sm.drawRect(Math.floorDiv((int) vm.getWorldMouseX(), 32) * 32f,
+                Math.floorDiv((int) vm.getWorldMouseY(), 32) * 32f,
+                inHand.w,
+                inHand.h,
+                false,
+                Color.GREEN);
+        }
+    }
+
+    @Override
+    public void updateScreen() {
+        updateUiTransform();
+        float mx = Gdx.input.getX();
+        float my = Gdx.graphics.getHeight() - Gdx.input.getY();
+
+        // Toolbar
+        sm.drawScreen(m8, m8, sw - 2 * m8, tw + m16, "toolbar_transparent_512");
+
+        // Draw buttons
+        for (Button button : buttons) {
+            button.draw();
+
+            boolean hovered =
+                mx >= button.x && mx <= button.x + button.w &&
+                    my >= button.y && my <= button.y + button.h;
+
+            if (hovered && Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
+                button.onClick();
+            }
+        }
+
+        switch (category) {
+            case BLOCKS:
+                for (Button b : placeables.get("Blocks")) {
+                    b.draw();
+                    boolean hovered =
+                        mx >= b.x && mx <= b.x + b.w &&
+                            my >= b.y && my <= b.y + b.h;
+
+                    if (hovered && Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
+                        b.onClick();
+                    }
+                }
+                break;
+
+            case BOXES:
+                for (Button b : placeables.get("Boxes")) {
+                    b.draw();
+                    boolean hovered =
+                        mx >= b.x && mx <= b.x + b.w &&
+                            my >= b.y && my <= b.y + b.h;
+
+                    if (hovered && Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
+                        b.onClick();
+                    }
+                }
+
+                break;
+
+            case BACKGROUNDS:
+                for (Button b : placeables.get("Backgrounds")) {
+                    b.draw();
+                    boolean hovered =
+                        mx >= b.x && mx <= b.x + b.w &&
+                            my >= b.y && my <= b.y + b.h;
+
+                    if (hovered && Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
+                        b.onClick();
+                    }
+                }
+
+                break;
+
+            case DETAILS:
+                for (Button b : placeables.get("Details")) {
+                    b.draw();
+                    boolean hovered =
+                        mx >= b.x && mx <= b.x + b.w &&
+                            my >= b.y && my <= b.y + b.h;
+
+                    if (hovered && Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
+                        b.onClick();
+                    }
+                }
+
+                break;
+
+            case ENTITIES:
+                for (Button b : placeables.get("Entities")) {
+                    b.draw();
+                    boolean hovered =
+                        mx >= b.x && mx <= b.x + b.w &&
+                            my >= b.y && my <= b.y + b.h;
+
+                    if (hovered && Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
+                        b.onClick();
+                    }
+                }
+        }
+
+        // Active button framing
+        switch (action) {
+            case MOVE:
+                sm.drawScreen(m8, Gdx.graphics.getHeight() - tw - m8, tw, tw, "frame");
+                break;
+            case HAND:
+                sm.drawScreen(tw + 2 * m8, Gdx.graphics.getHeight() - tw - m8, tw, tw, "frame");
+                break;
+            case COLLISIONS:
+                sm.drawScreen(2 * tw + 3 * m8, Gdx.graphics.getHeight() - tw - m8, tw, tw, "frame");
+                break;
+            case ZONE:
+                sm.drawScreen(3 * tw + 4 * m8, Gdx.graphics.getHeight() - tw - m8, tw, tw, "frame");
+                break;
+            case DELETE:
+                sm.drawScreen(4 * tw + 5 * m8, Gdx.graphics.getHeight() - tw - m8, tw, tw, "frame");
+                break;
+        }
+
+        TextManager.draw("X: " + getUiMouse().x + " Y: " + getUiMouse().y, 20, Color.WHITE, false, g.getWidth() / 2f - 64, g.getHeight() - 32);
+    }
+
+    @Override
     public void handleInput() {
 
         switch (action) {
@@ -226,99 +371,5 @@ public class LevelEditor extends Level {
         if (Gdx.input.isKeyJustPressed(Input.Keys.Z)) {
             action = Action.ZONE;
         }
-    }
-
-    @Override
-    public void updateWorld() {
-        int worldSize = 1024;
-        for (int i = -worldSize; i <= worldSize; i++) {
-            if (i%32 == 0) {
-                sm.drawLine(i, i, -worldSize, worldSize, Color.DARK_GRAY);
-                sm.drawLine(-worldSize, worldSize, i, i, Color.DARK_GRAY);
-            }
-
-            if (i%128 == 0 || i==0) {
-                TextManager.draw(String.valueOf(i), 8, Color.WHITE, false, i, 0);
-                TextManager.draw(String.valueOf(i), 8, Color.WHITE, false,0, i);
-            }
-        }
-    }
-
-    @Override
-    public void updateScreen() {
-        updateUiTransform();
-        float mx = Gdx.input.getX();
-        float my = Gdx.graphics.getHeight() - Gdx.input.getY();
-
-        // Toolbar
-        sm.drawScreen(m8, m8, sw - 2 * m8, tw + m16, "toolbar_transparent_512");
-
-        // Draw buttons
-        for (Button button : buttons) {
-            button.draw();
-
-            boolean hovered =
-                mx >= button.x && mx <= button.x + button.w &&
-                    my >= button.y && my <= button.y + button.h;
-
-            if (hovered && Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
-                button.onClick();
-            }
-        }
-
-        switch (category) {
-            case BLOCKS:
-                for (Button b : placeables.get("Blocks")) {
-                    b.draw();
-                }
-                break;
-
-            case BOXES:
-                for (Button b : placeables.get("Boxes")) {
-                    b.draw();
-                }
-
-                break;
-
-            case BACKGROUNDS:
-                for (Button b : placeables.get("Backgrounds")) {
-                    b.draw();
-                }
-
-                break;
-
-            case DETAILS:
-                for (Button b : placeables.get("Details")) {
-                    b.draw();
-                }
-
-                break;
-
-            case ENTITIES:
-                for (Button b : placeables.get("Entities")) {
-                    b.draw();
-                }
-        }
-
-        // Active button framing
-        switch (action) {
-            case MOVE:
-                sm.drawScreen(m8, Gdx.graphics.getHeight() - tw - m8, tw, tw, "frame");
-                break;
-            case HAND:
-                sm.drawScreen(tw + 2 * m8, Gdx.graphics.getHeight() - tw - m8, tw, tw, "frame");
-                break;
-            case COLLISIONS:
-                sm.drawScreen(2 * tw + 3 * m8, Gdx.graphics.getHeight() - tw - m8, tw, tw, "frame");
-                break;
-            case ZONE:
-                sm.drawScreen(3 * tw + 4 * m8, Gdx.graphics.getHeight() - tw - m8, tw, tw, "frame");
-                break;
-            case DELETE:
-                sm.drawScreen(4 * tw + 5 * m8, Gdx.graphics.getHeight() - tw - m8, tw, tw, "frame");
-                break;
-        }
-
-        TextManager.draw("X: " + getUiMouse().x + " Y: " + getUiMouse().y, 20, Color.WHITE, false, g.getWidth() / 2f - 64, g.getHeight() - 32);
     }
 }
