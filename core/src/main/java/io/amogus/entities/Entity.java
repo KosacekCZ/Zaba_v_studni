@@ -114,7 +114,7 @@ public abstract class Entity {
         Sprite s = new Sprite();
         s.setBounds(x, y, w, h);
         s.setOrigin(w / 2, h / 2);
-        Managers.sm.drawRect(x, y, w, h, false, Color.RED);
+        //Managers.sm.drawRect(x, y, w, h, false, Color.RED);
         return s;
     }
 

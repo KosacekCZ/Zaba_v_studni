@@ -25,7 +25,7 @@ public class Main extends ApplicationAdapter {
 
         Managers.lm.registerGameStates();
         Managers.lm.setup();
-        Managers.lm.setGameState(E_Gamestate.TESTING);
+        Managers.lm.setGameState(E_Gamestate.EDITOR);
 
         Managers.sm.setGlobalIllumination(0.6f);
 

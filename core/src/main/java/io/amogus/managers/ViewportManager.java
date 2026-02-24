@@ -9,6 +9,7 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport;
 public class ViewportManager {
     private static ViewportManager instance;
     private float zoom;
+    private boolean firstResize = true;
 
     public static final float WORLD_WIDTH = 1280f;
     public static final float WORLD_HEIGHT = 720f;
@@ -42,8 +43,18 @@ public class ViewportManager {
         uiCamera.update();
     }
 
+
+
     public void resize(int width, int height) {
-        worldViewport.update(width, height, true);
+        worldViewport.update(width, height, false);
+
+        if (firstResize) {
+            firstResize = false;
+            var cam = (com.badlogic.gdx.graphics.OrthographicCamera) worldViewport.getCamera();
+            cam.position.set(0f, 0f, 0f);          // or whatever start you want
+            cam.update();
+        }
+
         uiCamera.setToOrtho(false, width, height);
         uiCamera.update();
     }

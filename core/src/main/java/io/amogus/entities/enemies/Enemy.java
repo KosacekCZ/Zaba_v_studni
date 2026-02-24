@@ -60,7 +60,7 @@ public class Enemy extends Entity {
 
         }
         //headAngle = (float) Math.max(0, Math.min(3, Math.pow(Math.abs(Math.pow(Math.sin(headAngleTimer), 2)), Math.pow(Math.tan(headAngleTimer), 0.76)) - 0.6f));
-        headAngle = (float) Math.max(0, Math.min(3, Math.pow(Math.abs(Math.pow(Math.sin(headAngleTimer), 2)), Math.tan(headAngleTimer)) - 0.45f)) * 45;
+        headAngle = (float) Math.max(0, Math.min(3, Math.pow(Math.abs(Math.pow(Math.sin(headAngleTimer), 2)), Math.tan(headAngleTimer)) - 0.45f)) * 30;
         if (moving) {
             sm.draw(x, y, 32, 32, 0, false, Managers.am.animateSprite(16, Gdx.graphics.getDeltaTime(), "enemy_body_1_animated"));
             sm.draw(x, y, 32, 32, headAngle, false, Managers.am.animateSprite(16, Gdx.graphics.getDeltaTime(), head));
@@ -171,7 +171,6 @@ public class Enemy extends Entity {
 
     @Override
     public void onCollide(Entity e) {
-        System.out.println(e.getType());
         if (e.getType() == Type.PROJECTILE) {
             this.health -= e.getDamage();
             if (health <= 0) Destroy();
