@@ -16,6 +16,8 @@ public class Enemy extends Entity {
     private float attackInterval = 1.0f;
     private float attackTimer = 0f;
     private float attackRange = 15f;
+    private float headAngleTimer = 0f;
+    private float headAngle = 0f;
 
     private String head;
     private String body;
@@ -45,13 +47,24 @@ public class Enemy extends Entity {
         updateMovement();
         boolean moving = (state == State.WANDER || state == State.FOLLOW);
 
+        if (state == State.WANDER || state == State.ATTACK) {
+            headAngleTimer = (headAngleTimer > 60 ? 0 : headAngleTimer + Gdx.graphics.getDeltaTime() * 2);
+        } else {
+            headAngleTimer = (headAngleTimer > 60 ? 0 : headAngleTimer + Gdx.graphics.getDeltaTime() * 16);
+
+        }
+        //headAngle = (float) Math.max(0, Math.min(3, Math.pow(Math.abs(Math.pow(Math.sin(headAngleTimer), 2)), Math.pow(Math.tan(headAngleTimer), 0.76)) - 0.6f));
+        headAngle = (float) Math.max(0, Math.min(3, Math.pow(Math.abs(Math.pow(Math.sin(headAngleTimer), 2)), Math.tan(headAngleTimer)) - 0.45f)) * 45;
+        System.out.println(headAngle);
+
         if (moving) {
             sm.draw(x, y, 32, 32, 0, false, Managers.am.animateSprite(16, Gdx.graphics.getDeltaTime(), "enemy_body_1_animated"));
-            sm.draw(x, y, 32, 32, 0, false, Managers.am.animateSprite(16, Gdx.graphics.getDeltaTime(), head));
+            sm.draw(x, y, 32, 32, headAngle, false, Managers.am.animateSprite(16, Gdx.graphics.getDeltaTime(), head));
         } else {
             sm.draw(x, y, 32, 32, body);
             sm.draw(x, y, 32, 32, head);
         }
+
         if (jaw != null) {
             sm.draw(x, y, 32, 32, jaw);
         }

@@ -163,7 +163,7 @@ public class Player extends Entity {
     }
 
     public void onCollide(Entity e) {
-        System.out.println("Hit");
+        //System.out.println("Hit");
     }
 
 }
