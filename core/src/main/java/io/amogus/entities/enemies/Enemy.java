@@ -1,10 +1,13 @@
 package io.amogus.entities.enemies;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.Color;
 import io.amogus.entities.Entity;
 import io.amogus.entities.Player;
+import io.amogus.entities.Projectile;
+import io.amogus.entities.Type;
 import io.amogus.entities.logic.State;
 import io.amogus.managers.Managers;
+import io.amogus.managers.TextManager;
 
 public class Enemy extends Entity {
     private State state = State.WANDER;
@@ -25,6 +28,7 @@ public class Enemy extends Entity {
 
     public Enemy(float x, float y, int health, int damage, float speed, String head, String body) {
         super(x, y, head, health, damage, speed);
+        this.type = Type.ENEMY;
         this.w = 32f;
         this.h = 32f;
         this.radius = 4f;
@@ -34,6 +38,7 @@ public class Enemy extends Entity {
 
     public Enemy(float x, float y, int health, int damage, float speed, String head, String body, String jaw) {
         super(x, y, head, health, damage, speed);
+        this.type = Type.ENEMY;
         this.w = 32f;
         this.h = 32f;
         this.radius = 4f;
@@ -45,6 +50,7 @@ public class Enemy extends Entity {
     @Override
     public void updateWorld() {
         updateMovement();
+        TextManager.draw(String.valueOf(getHealth()), 8, Color.WHITE, true, x, y + 32);
         boolean moving = (state == State.WANDER || state == State.FOLLOW);
 
         if (state == State.WANDER || state == State.ATTACK) {
@@ -55,8 +61,6 @@ public class Enemy extends Entity {
         }
         //headAngle = (float) Math.max(0, Math.min(3, Math.pow(Math.abs(Math.pow(Math.sin(headAngleTimer), 2)), Math.pow(Math.tan(headAngleTimer), 0.76)) - 0.6f));
         headAngle = (float) Math.max(0, Math.min(3, Math.pow(Math.abs(Math.pow(Math.sin(headAngleTimer), 2)), Math.tan(headAngleTimer)) - 0.45f)) * 45;
-        System.out.println(headAngle);
-
         if (moving) {
             sm.draw(x, y, 32, 32, 0, false, Managers.am.animateSprite(16, Gdx.graphics.getDeltaTime(), "enemy_body_1_animated"));
             sm.draw(x, y, 32, 32, headAngle, false, Managers.am.animateSprite(16, Gdx.graphics.getDeltaTime(), head));
@@ -167,6 +171,11 @@ public class Enemy extends Entity {
 
     @Override
     public void onCollide(Entity e) {
-
+        System.out.println(e.getType());
+        if (e.getType() == Type.PROJECTILE) {
+            this.health -= e.getDamage();
+            if (health <= 0) Destroy();
+            e.Destroy();
+        }
     }
 }

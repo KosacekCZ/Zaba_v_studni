@@ -12,21 +12,25 @@ public class Projectile extends Entity {
     private int maxBounces = 2;
 
 
-    public Projectile(float x, float y, float speed, float rotation, String texture) {
+    public Projectile(float x, float y, float speed, float rotation, String texture, int damage) {
         super(x, y, rotation, texture);
+        this.type = Type.PROJECTILE;
         this.levelBounds = lm.getCurrentState().getBounds();
         this.speed = 60f * 10 * Gdx.graphics.getDeltaTime();
         this.projectileSpin = rotation;
         this.speed = speed * Gdx.graphics.getDeltaTime() * 60;
+        this.damage = damage;
     }
 
-    public Projectile(float x, float y, float speed, float rotation, String texture, int maxBounces) {
+    public Projectile(float x, float y, float speed, float rotation, String texture, int maxBounces, int damage) {
         super(x, y, rotation, texture);
+        this.type = Type.PROJECTILE;
         this.levelBounds = lm.getCurrentState().getBounds();
         this.speed = 60f * 10 * Gdx.graphics.getDeltaTime();
         this.projectileSpin = rotation;
         this.maxBounces = maxBounces;
         this.speed = speed * Gdx.graphics.getDeltaTime() * 60;
+        this.damage = damage;
     }
 
     public void updateScreen() {

@@ -24,6 +24,7 @@ public class Player extends Entity {
 
     public Player(String id, float x, float y, int health, int damage, float speed, String texture) {
         super(x, y, texture, health, damage, speed);
+        this.type = Type.PLAYER;
         this.w = 32f;
         this.h = 32f;
         this.playerId = id;

@@ -98,7 +98,7 @@ public class Shotgun extends Item {
             // Projectile spawn
             for (int i = 0; i < count; i++) {
                 float rot = start + i * step;
-                em.spawnEntity(new Projectile(owner.getX() + 16f, owner.getY() + 16f, 20, rot, "projectile", 3));
+                em.spawnEntity(new Projectile(owner.getX() + 16f, owner.getY() + 16f, 20, rot, "projectile", 3, 10));
             }
             this.magCount--;
             canFire = false;

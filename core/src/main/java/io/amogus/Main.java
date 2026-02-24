@@ -30,9 +30,9 @@ public class Main extends ApplicationAdapter {
         Managers.sm.setGlobalIllumination(0.6f);
 
 
-        Managers.em.spawnEntity(new Enemy(100, 150, 100, 10, 8f, "enemy_head_1", "enemy_body_1"));
-        Managers.em.spawnEntity(new Enemy(100, 150, 100, 10, 8f, "enemy_head_2", "enemy_body_1"));
-        Managers.em.spawnEntity(new Enemy(150, 150, 100, 10, 8f, "enemy_head_3", "enemy_body_1"));
+        //Managers.em.spawnEntity(new Enemy(100, 150, 100, 10, 8f, "enemy_head_1", "enemy_body_1"));
+        //Managers.em.spawnEntity(new Enemy(100, 150, 100, 10, 8f, "enemy_head_2", "enemy_body_1"));
+        //Managers.em.spawnEntity(new Enemy(150, 150, 100, 10, 8f, "enemy_head_3", "enemy_body_1"));
         Managers.em.spawnEntity(new Enemy(100, 150, 100, 10, 8f, "enemy_head_4", "enemy_body_1", "enemy_jaw_1"));
     }
 

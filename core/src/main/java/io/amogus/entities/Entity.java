@@ -1,5 +1,6 @@
 package io.amogus.entities;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 import io.amogus.items.Item;
@@ -24,6 +25,7 @@ public abstract class Entity {
     protected HashMap<Integer, Item> inventory;
     protected int inHand;
     protected float radius;
+    protected Type type;
 
     protected SpriteManager sm;
     protected ServerManager svm;
@@ -112,7 +114,7 @@ public abstract class Entity {
         Sprite s = new Sprite();
         s.setBounds(x, y, w, h);
         s.setOrigin(w / 2, h / 2);
-        s.setCenter(w / 2, h / 2);
+        Managers.sm.drawRect(x, y, w, h, false, Color.RED);
         return s;
     }
 
@@ -202,15 +204,15 @@ public abstract class Entity {
         this.speed = speed;
     }
 
-    public void setDestroy(boolean destroy) {
-        isDestroy = destroy;
-    }
-
     public float getRotation() {
         return rotation;
     }
 
     public void setRotation(float rotation) {
         this.rotation = rotation;
+    }
+
+    public Type getType() {
+        return type;
     }
 }

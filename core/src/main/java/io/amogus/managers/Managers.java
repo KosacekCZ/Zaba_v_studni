@@ -10,6 +10,7 @@ public final class Managers {
     public static SpriteManager sm;
     public static ViewportManager vm;
     public static TextureManager tm;
+    public static TextManager txm;
 
 
     public static void init() {
