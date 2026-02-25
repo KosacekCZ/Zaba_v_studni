@@ -16,6 +16,7 @@ public class Button {
     public boolean isPressed;
     public Runnable fn;
 
+
     public Button(float x, float y, float w, float h, String texture, String pressedTexture, String iconTexutre, String btnText, Runnable fn) {
         this.x = x;
         this.y = y;
@@ -43,16 +44,17 @@ public class Button {
     }
 
     public void draw() {
-        if (!isPressed || pressedTexture == null) {
-            Managers.sm.drawScreen(x, y, w, h, "btn");
-        } else {
-            Managers.sm.drawScreen(x, y, w, h, "btn");
-        }
+        Managers.sm.drawScreen(x, y, w, h, "btn");
 
         if (btnText == null && iconTexutre != null)  {
             Managers.sm.drawScreen(x, y, w, h, iconTexutre);
         } else {
             TextManager.draw(btnText, 8, Color.WHITE, false, x, y);
+        }
+
+        if (isPressed) {
+            Managers.sm.drawScreen(x, y, w, h, "frame");
+
         }
     }
 

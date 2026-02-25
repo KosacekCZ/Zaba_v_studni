@@ -186,6 +186,25 @@ public class SpriteManager {
         );
     }
 
+    /**
+     * Generic draw method
+     * @param x
+     * @param y
+     * @param w
+     * @param h
+     * @param rotation
+     * @param alpha
+     * @param textureName
+     */
+    public void draw(float x, float y, float w, float h, float rotation, float alpha, String textureName) {
+        Color c = batch.getColor();
+        float r = c.r, g = c.g, b = c.b, a = c.a;
+
+        batch.setColor(r, g, b, a * alpha);
+        batch.draw(new TextureRegion(textures.get(textureName)), x, y, w / 2f, h / 2f, w, h, 1f, 1f, rotation);
+        batch.setColor(r, g, b, a);
+    }
+
 
     public void drawLine(float x, float x2, float y, float y2, Color color) {
         if (mode != Mode.WORLD) throw new IllegalStateException("drawLine() called outside world pass. Use beginWorld() before drawLine().");
