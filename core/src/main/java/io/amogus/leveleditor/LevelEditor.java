@@ -30,6 +30,7 @@ public class LevelEditor extends Level {
     private final ArrayList<Button> buttons;
     private final HashMap<String, ArrayList<Button>> placeables;
     private final ArrayList<Prop> placed;
+    private final ArrayList<Prop> undo;
 
     float sw = Gdx.graphics.getWidth();
     float sh = Gdx.graphics.getHeight();
@@ -64,6 +65,7 @@ public class LevelEditor extends Level {
         buttons = new ArrayList<>();
         placeables = new HashMap<>();
         placed = new ArrayList<>();
+        undo = new ArrayList<>();
     }
 
     @Override
@@ -240,6 +242,7 @@ public class LevelEditor extends Level {
 
     @Override
     public void handleInput() {
+        handleMacros();
 
         switch (action) {
             case HAND:
@@ -260,6 +263,20 @@ public class LevelEditor extends Level {
 
 
 
+    }
+
+    public void handleMacros() {
+        if (Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT) && Gdx.input.isKeyJustPressed(Input.Keys.Z)) {
+            if (!placed.isEmpty()) {
+                undo.add(placed.remove(placed.size() - 1));
+            }
+        }
+
+        if (Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT) && Gdx.input.isKeyJustPressed(Input.Keys.Y)) {
+            if (!undo.isEmpty()) {
+                placed.add(undo.remove(undo.size() - 1));
+            }
+        }
     }
 
     public void handleButtonInput(ArrayList<Button> buttons) {
@@ -295,6 +312,7 @@ public class LevelEditor extends Level {
                     inHand.texture,
                     inHand.rotation
                 ));
+                undo.clear();
             }
         }
 
