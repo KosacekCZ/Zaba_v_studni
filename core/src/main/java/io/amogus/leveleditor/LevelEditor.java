@@ -13,6 +13,7 @@ import io.amogus.managers.TextManager;
 import io.amogus.managers.ViewportManager;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -26,16 +27,18 @@ public class LevelEditor extends Level {
     private final Graphics g;
     private final List<Category> categories;
     private int categoryCycler = 0;
+    private int currentLayer = -1;
 
     private final ArrayList<Button> buttons;
     private final HashMap<String, ArrayList<Button>> placeables;
     private final ArrayList<Prop> placed;
     private final ArrayList<Prop> undo;
+    private final List<Integer> layers;
 
     float sw = Gdx.graphics.getWidth();
     float sh = Gdx.graphics.getHeight();
     float rtw = REF_WIDTH / 32f;
-    private float uiScale = Math.min(sw / REF_WIDTH, sh / REF_HEIGHT);
+    private final float uiScale = Math.min(sw / REF_WIDTH, sh / REF_HEIGHT);
     int tw = Math.round(rtw * uiScale);
     float m4  = 4f  * uiScale;
     float m8  = 8f  * uiScale;
@@ -66,6 +69,7 @@ public class LevelEditor extends Level {
         placeables = new HashMap<>();
         placed = new ArrayList<>();
         undo = new ArrayList<>();
+        layers  = new ArrayList<>(List.of(-1, 0, 1, 2));
     }
 
     @Override
@@ -166,35 +170,59 @@ public class LevelEditor extends Level {
         }));
 
 
-        // Top-left
-        buttons.add(new Button(m8, Gdx.graphics.getHeight() - tw - m8, tw, tw, "arrow_move", () -> {
+        // Left
+        buttons.add(new Button(m8, Gdx.graphics.getHeight() - pbw, tw, tw, "hand", () -> {
+            action = Action.HAND;
+            inHand = null;
+        }));
+
+        buttons.add(new Button(m8, Gdx.graphics.getHeight() - 2 * pbw, tw, tw, "select", () -> {
+            action = Action.SELECT;
+        }));
+
+        buttons.add(new Button(m8, Gdx.graphics.getHeight() - 3 * pbw, tw, tw, "arrow_move", () -> {
             action = Action.MOVE;
         }));
 
-        buttons.add(new Button(tw + 2 * m8, Gdx.graphics.getHeight() - tw - m8, tw, tw, "hand", () -> {
-            action = Action.HAND;
-
-        }));
-
-        buttons.add(new Button(2 * tw + 3 * m8, Gdx.graphics.getHeight() - tw - m8, tw, tw, "place", () -> {
+        buttons.add(new Button(m8, Gdx.graphics.getHeight() - 4 * pbw, tw, tw, "place", () -> {
             action = Action.PLACE;
+        }));
+
+        buttons.add(new Button(m8, Gdx.graphics.getHeight() - 5 * pbw, tw, tw, "eraser", () -> {
+            action = Action.ERASE;
+        }));
+
+        buttons.add(new Button(m8, Gdx.graphics.getHeight() - 6 * pbw, tw, tw, "step_back", false, () -> {
+            action = Action.UNDO;
+        }));
+
+        buttons.add(new Button(m8, Gdx.graphics.getHeight() - 7 * pbw, tw, tw, "step_forward", false, () -> {
+            action = Action.REDO;
+        }));
+
+
+
+        // Top-left
+        buttons.add(new Button(tw + 2 * m8, Gdx.graphics.getHeight() - tw - m8, tw, tw, "layers", false, () -> {
+            currentLayer = (layers.size() > (currentLayer + 2) ? currentLayer + 1 : -1);
 
         }));
 
-        buttons.add(new Button(3 * tw + 4 * m8, Gdx.graphics.getHeight() - tw - m8, tw, tw, "collisions", () -> {
-            action = Action.COLLISIONS;
+        buttons.add(new Button(2 * tw + 3 * m8, Gdx.graphics.getHeight() - tw - m8, tw, tw, "new_layer", false, () -> {
+            layers.add(layers.size() - 1);
 
         }));
 
-        buttons.add(new Button(4 * tw + 5 * m8, Gdx.graphics.getHeight() - tw - m8, tw, tw, "action_zoning", () -> {
-            action = Action.ZONE;
+        buttons.add(new Button(3 * tw + 4 * m8, Gdx.graphics.getHeight() - tw - m8, tw, tw, "delete_layer", false, () -> {
+            if (currentLayer != -1) {
+                int removedLayer = currentLayer + 1;
+                placed.removeIf(p -> p.z == currentLayer + 1);
+                currentLayer = (currentLayer > -1 ?  currentLayer - 1 : -1);
+                layers.remove(removedLayer);
+            }
 
         }));
 
-        buttons.add(new Button(5 * tw + 6 * m8, Gdx.graphics.getHeight() - tw - m8, tw, tw, "delete", () -> {
-            action = Action.DELETE;
-
-        }));
     }
 
     @Override
@@ -235,20 +263,21 @@ public class LevelEditor extends Level {
                 handleButtonInput(placeables.get("Entities"));
         }
 
-
-
+        TextManager.draw("Layer: " + (layers.get(currentLayer + 1) < 0 ? "All" : layers.get(currentLayer + 1)), 20, Color.WHITE, false, g.getWidth() / 2f - 256, g.getHeight() - 32);
         TextManager.draw("X: " + getUiMouse().x + " Y: " + getUiMouse().y, 20, Color.WHITE, false, g.getWidth() / 2f - 64, g.getHeight() - 32);
     }
 
     @Override
     public void handleInput() {
         handleMacros();
+        handleMouseDrag();
+        handleScroll();
+
 
         switch (action) {
             case HAND:
             case MOVE:
-                handleMouseDrag();
-                handleScroll();
+
                 break;
             case PLACE:
                 handlePlacing();
@@ -277,6 +306,12 @@ public class LevelEditor extends Level {
                 placed.add(undo.remove(undo.size() - 1));
             }
         }
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.Q)) {
+            inHand = null;
+        }
+
+
     }
 
     public void handleButtonInput(ArrayList<Button> buttons) {
@@ -292,8 +327,10 @@ public class LevelEditor extends Level {
 
             if (hovered && Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
                 b.onClick();
-                buttons.forEach(btn -> btn.isPressed = false);
-                b.isPressed = true;
+                if (b.isToggleable) {
+                    buttons.forEach(btn -> btn.isPressed = false);
+                    b.isPressed = true;
+                }
             }
         }
     }
@@ -302,22 +339,28 @@ public class LevelEditor extends Level {
         float mouseY = Gdx.input.getY();
         float screenHeight = Gdx.graphics.getHeight();
 
-        if (mouseY > 100f && mouseY < screenHeight - 100f) {
-            if (inHand != null && Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
-                placed.add(new Prop(
+        if (mouseY > 100f && mouseY < screenHeight - 100f && currentLayer != -1) {
+            if (inHand != null && Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
+                Prop newProp = new Prop(
                     Math.floorDiv((int) vm.getWorldMouseX(), 32) * 32f,
                     Math.floorDiv((int) vm.getWorldMouseY(), 32) * 32f,
+                    currentLayer,
                     inHand.w,
                     inHand.h,
                     inHand.texture,
-                    inHand.rotation
-                ));
+                    inHand.rotation);
+
+                if (placed.stream().noneMatch(p -> p.x == newProp.x && p.y == newProp.y && p.z == newProp.z)) {
+                    placed.add(newProp);
+                }
+
                 undo.clear();
             }
         }
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.R)) {
             inHand.rotation = (inHand.rotation <= 270 ? inHand.rotation + 90 : 90 );
+            System.out.println(inHand.rotation);
         }
     }
 
@@ -342,12 +385,12 @@ public class LevelEditor extends Level {
     }
 
     public void handleMouseDrag() {
-        if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
+        if (Gdx.input.isButtonJustPressed(Input.Buttons.RIGHT)) {
             if (mouseDragStartVec == null) mouseDragStartVec = new Vector2();
             mouseDragStartVec.set(Gdx.input.getX(), Gdx.input.getY());
         }
 
-        if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
+        if (Gdx.input.isButtonPressed(Input.Buttons.RIGHT)) {
             var cam = vm.getWorldCamera();
 
             float sx0 = mouseDragStartVec.x;
@@ -384,7 +427,14 @@ public class LevelEditor extends Level {
     }
 
     public void drawPlaced() {
-        placed.forEach(p -> sm.draw(p.x, p.y, p.w, p.h, p.rotation, p.texture));
+        if (currentLayer == -1) {
+            for (int l : layers) {
+                placed.stream().filter( p -> p.z == l).forEach(p -> sm.draw(p.x, p.y, p.w, p.h, p.rotation, p.texture));
+            }
+        } else {
+            placed.stream().filter( p -> p.z != currentLayer).forEach(p -> sm.draw(p.x, p.y, p.w, p.h, p.rotation, 0.25f, p.texture));
+            placed.stream().filter( p -> p.z == currentLayer).forEach(p -> sm.draw(p.x, p.y, p.w, p.h, p.rotation, p.texture));
+        }
     }
 
     public void drawGrid() {

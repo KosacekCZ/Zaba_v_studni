@@ -14,6 +14,8 @@ public class Button {
     public String iconTexutre;
     public String btnText;
     public boolean isPressed;
+    public boolean isDissabled;
+    public boolean isToggleable;
     public Runnable fn;
 
 
@@ -32,6 +34,17 @@ public class Button {
     public Button( float x, float y, float w, float h, String iconTexutre, Runnable fn) {
         this.fn = fn;
         this.iconTexutre = iconTexutre;
+        this.isToggleable = true;
+        this.h = h;
+        this.w = w;
+        this.y = y;
+        this.x = x;
+    }
+
+    public Button( float x, float y, float w, float h, String iconTexutre, boolean isToggleable, Runnable fn) {
+        this.fn = fn;
+        this.iconTexutre = iconTexutre;
+        this.isToggleable = isToggleable;
         this.h = h;
         this.w = w;
         this.y = y;
@@ -40,7 +53,9 @@ public class Button {
 
     public void onClick() {
         fn.run();
-        isPressed = true;
+        if (isToggleable) {
+            isPressed = true;
+        }
     }
 
     public void draw() {
