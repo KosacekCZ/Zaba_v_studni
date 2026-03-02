@@ -50,6 +50,18 @@ public class LevelEditor extends Level {
 
     private Prop inHand;
 
+    // ISO test
+    private final float isoTileW = 64f;
+    private final float isoTileH = 32f;
+
+    private final Vector2 tmp0 = new Vector2();
+    private final Vector2 tmp1 = new Vector2();
+    private final Vector2 tmpGrid = new Vector2();
+    private final Vector2 tmpIso = new Vector2();
+    // x ISO test
+
+
+
     public LevelEditor(LevelManager lm) {
         super(E_Gamestate.EDITOR, lm);
         sm.setGlobalIllumination(1.0f);
@@ -127,6 +139,12 @@ public class LevelEditor extends Level {
             }),
             new Button(12 * pbw, m16, tw, tw,  "wall_straight", () -> {
                 inHand = new Prop(0, 0, 128, 128, "wall_straight", 0);
+            }),
+            new Button(13 * pbw, m16, tw, tw,  "floor_1_iso", () -> {
+                inHand = new Prop(0, 0, 64, 32, "floor_1_iso", 0);
+            }),
+            new Button(14 * pbw, m16, tw, tw,  "floor_outer_1_iso", () -> {
+                inHand = new Prop(0, 0, 64, 32, "floor_outer_1_iso", 0);
             })
         ));
 
@@ -227,7 +245,8 @@ public class LevelEditor extends Level {
 
     @Override
     public void updateWorld() {
-        drawGrid();
+        // ISO test
+        drawIsoGrid();
         drawPlaced();
         handlePlacingDraw();
     }
@@ -334,7 +353,7 @@ public class LevelEditor extends Level {
             }
         }
     }
-
+    /* Obsolete
     public void handlePlacing() {
         float mouseY = Gdx.input.getY();
         float screenHeight = Gdx.graphics.getHeight();
@@ -383,6 +402,59 @@ public class LevelEditor extends Level {
                 Color.GREEN);
         }
     }
+    */
+
+    public void handlePlacing() {
+        float mouseY = Gdx.input.getY();
+        float screenHeight = Gdx.graphics.getHeight();
+
+        if (mouseY <= 100f || mouseY >= screenHeight - 100f || currentLayer == -1) return;
+        if (inHand == null) return;
+
+        if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
+            isoToGrid(vm.getWorldMouseX(), vm.getWorldMouseY(), tmpGrid);
+
+            int gx = roundIso(tmpGrid.x);
+            int gy = roundIso(tmpGrid.y);
+
+            gridToIso(gx, gy, tmpIso);
+
+            Prop newProp = new Prop(
+                tmpIso.x, tmpIso.y,
+                currentLayer,
+                inHand.w, inHand.h,
+                inHand.texture,
+                inHand.rotation
+            );
+
+            if (placed.stream().noneMatch(pr -> pr.x == newProp.x && pr.y == newProp.y && pr.z == newProp.z)) {
+                placed.add(newProp);
+            }
+            undo.clear();
+        }
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.R)) {
+            inHand.rotation = (inHand.rotation <= 270 ? inHand.rotation + 90 : 90);
+        }
+    }
+
+    private int roundIso(float v) {
+        return v >= 0f ? (int) Math.floor(v + 0.5f) : (int) Math.ceil(v - 0.5f);
+    }
+
+    public void handlePlacingDraw() {
+        if (inHand == null) return;
+
+        isoToGrid(vm.getWorldMouseX(), vm.getWorldMouseY(), tmpGrid);
+
+        int gx = Math.round(tmpGrid.x);
+        int gy = Math.round(tmpGrid.y);
+
+        gridToIso(gx, gy, tmpIso);
+
+        sm.drawIso(tmpIso.x, tmpIso.y, 64f, 32f, 0f, 0.5f, inHand.texture);
+        drawIsoDiamond(tmpIso.x, tmpIso.y, isoTileW, isoTileH, Color.GREEN);
+    }
 
     public void handleMouseDrag() {
         if (Gdx.input.isButtonJustPressed(Input.Buttons.RIGHT)) {
@@ -426,6 +498,7 @@ public class LevelEditor extends Level {
         }
     }
 
+    /* Obsolete
     public void drawPlaced() {
         if (currentLayer == -1) {
             for (int l : layers) {
@@ -434,6 +507,24 @@ public class LevelEditor extends Level {
         } else {
             placed.stream().filter( p -> p.z != currentLayer).forEach(p -> sm.draw(p.x, p.y, p.w, p.h, p.rotation, 0.25f, p.texture));
             placed.stream().filter( p -> p.z == currentLayer).forEach(p -> sm.draw(p.x, p.y, p.w, p.h, p.rotation, p.texture));
+        }
+    }
+    */
+
+    public void drawPlaced() {
+        placed.sort((a, b) -> Float.compare(b.y, a.y));
+
+        if (currentLayer == -1) {
+            for (int l : layers) {
+                placed.stream().filter(p -> p.z == l)
+                    .forEach(p -> sm.drawIso(p.x, p.y, 64f, 32f, 0f, 1f, p.texture));
+            }
+        } else {
+            placed.stream().filter(p -> p.z != currentLayer)
+                .forEach(p -> sm.drawIso(p.x, p.y, 64f, 32f, 0f, 0.3f, p.texture));
+
+            placed.stream().filter(p -> p.z == currentLayer)
+                .forEach(p -> sm.drawIso(p.x, p.y, 64f, 32f, 0f, 1f, p.texture));
         }
     }
 
@@ -451,5 +542,72 @@ public class LevelEditor extends Level {
                 TextManager.draw(String.valueOf(i), 8, Color.WHITE, false,0, i);
             }
         }
+    }
+
+    private Vector2 gridToIso(int tx, int ty, Vector2 out) {
+        out.set((tx - ty) * (isoTileW / 2f), (tx + ty) * (isoTileH / 2f));
+        return out;
+    }
+
+    private Vector2 isoToGrid(float isoX, float isoY, Vector2 out) {
+        float a = isoX / (isoTileW / 2f);
+        float b = isoY / (isoTileH / 2f);
+        out.set((b + a) / 2f, (b - a) / 2f);
+        return out;
+    }
+
+    public void drawIsoGrid() {
+        int halfTiles = 40;
+        float hw = isoTileW / 2f;
+        float hh = isoTileH / 2f;
+
+        for (int x = -halfTiles; x <= halfTiles; x++) {
+            for (int y = -halfTiles; y <= halfTiles; y++) {
+                Vector2 c = gridToIso(x, y, tmp0);
+
+                float cx = c.x;
+                float cy = c.y;
+
+                // drawLine(x1, x2, y1, y2)
+                sm.drawLine(cx,      cx + hw, cy + hh, cy,      Color.GRAY);
+                sm.drawLine(cx + hw, cx,      cy,      cy - hh, Color.GRAY);
+                sm.drawLine(cx,      cx - hw, cy - hh, cy,      Color.GRAY);
+                sm.drawLine(cx - hw, cx,      cy,      cy + hh, Color.GRAY);
+            }
+        }
+    }
+
+    private void drawIsoDiamond(float centerX, float centerY, float tileW, float tileH, Color color) {
+        float hw = tileW / 2f;
+        float hh = tileH / 2f;
+
+        float xTop = centerX;
+        float yTop = centerY + hh;
+
+        float xRight = centerX + hw;
+        float yRight = centerY;
+
+        float xBottom = centerX;
+        float yBottom = centerY - hh;
+
+        float xLeft = centerX - hw;
+        float yLeft = centerY;
+
+        sm.drawLine(xTop,    xRight,  yTop,    yRight,  color);
+        sm.drawLine(xRight,  xBottom, yRight,  yBottom, color);
+        sm.drawLine(xBottom, xLeft,   yBottom, yLeft,   color);
+        sm.drawLine(xLeft,   xTop,    yLeft,   yTop,    color);
+    }
+
+    private Vector2 snappedIsoDrawOrigin(float mouseWorldX, float mouseWorldY, float w, float h, Vector2 out) {
+        isoToGrid(mouseWorldX, mouseWorldY, tmpGrid);
+
+        int gx = Math.round(tmpGrid.x);
+        int gy = Math.round(tmpGrid.y);
+
+        gridToIso(gx, gy, tmpIso);
+
+        out.set(tmpIso.x - w / 2f, tmpIso.y - h / 2f);
+        return out;
     }
 }

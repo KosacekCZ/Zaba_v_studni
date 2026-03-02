@@ -227,6 +227,64 @@ public class SpriteManager {
         batch.draw(new TextureRegion(textures.get(textureName)), x, y, w / 2f, h / 2f, w, h, 1f, 1f, rotation);
     }
 
+    private final float[] isoVerts = new float[20];
+
+    public void drawIso(float centerX, float centerY, float tileW, float tileH, float rotationDeg, float alpha, String textureName) {
+        Texture t = textures.get(textureName);
+        if (t == null) return;
+
+        float hw = tileW * 0.5f;
+        float hh = tileH * 0.5f;
+
+        float xTop = centerX;
+        float yTop = centerY + hh;
+
+        float xRight = centerX + hw;
+        float yRight = centerY;
+
+        float xBottom = centerX;
+        float yBottom = centerY - hh;
+
+        float xLeft = centerX - hw;
+        float yLeft = centerY;
+
+        if (rotationDeg != 0f) {
+            float rad = (float) Math.toRadians(rotationDeg);
+            float cos = (float) Math.cos(rad);
+            float sin = (float) Math.sin(rad);
+
+            float dx, dy;
+
+            dx = xTop - centerX; dy = yTop - centerY;
+            xTop = centerX + dx * cos - dy * sin;
+            yTop = centerY + dx * sin + dy * cos;
+
+            dx = xRight - centerX; dy = yRight - centerY;
+            xRight = centerX + dx * cos - dy * sin;
+            yRight = centerY + dx * sin + dy * cos;
+
+            dx = xBottom - centerX; dy = yBottom - centerY;
+            xBottom = centerX + dx * cos - dy * sin;
+            yBottom = centerY + dx * sin + dy * cos;
+
+            dx = xLeft - centerX; dy = yLeft - centerY;
+            xLeft = centerX + dx * cos - dy * sin;
+            yLeft = centerY + dx * sin + dy * cos;
+        }
+
+        Color c = batch.getColor();
+        float packed = Color.toFloatBits(c.r, c.g, c.b, c.a * alpha);
+
+        float u  = 0f, v  = 0f, u2 = 1f, v2 = 1f;
+
+        isoVerts[0]  = xLeft;   isoVerts[1]  = yLeft;   isoVerts[2]  = packed; isoVerts[3]  = u;  isoVerts[4]  = v2;
+        isoVerts[5]  = xTop;    isoVerts[6]  = yTop;    isoVerts[7]  = packed; isoVerts[8]  = u;  isoVerts[9]  = v;
+        isoVerts[10] = xRight;  isoVerts[11] = yRight;  isoVerts[12] = packed; isoVerts[13] = u2; isoVerts[14] = v;
+        isoVerts[15] = xBottom; isoVerts[16] = yBottom; isoVerts[17] = packed; isoVerts[18] = u2; isoVerts[19] = v2;
+
+        batch.draw(t, isoVerts, 0, 20);
+    }
+
     public void loadSprite(String name, String path) {
         textures.put(name, new Texture(path));
     }
