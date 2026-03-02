@@ -20,6 +20,8 @@ public class SpriteManager {
     private Matrix4 worldMatrix;
     private Matrix4 uiMatrix;
 
+
+
     private enum Mode { NONE, WORLD, UI }
     private Mode mode = Mode.NONE;
 
@@ -202,6 +204,15 @@ public class SpriteManager {
 
         batch.setColor(r, g, b, a * alpha);
         batch.draw(new TextureRegion(textures.get(textureName)), x, y, w / 2f, h / 2f, w, h, 1f, 1f, rotation);
+        batch.setColor(r, g, b, a);
+    }
+
+    public void draw(float x, float y, float w, float h, float rotation, float alpha, TextureRegion textureRegion) {
+        Color c = batch.getColor();
+        float r = c.r, g = c.g, b = c.b, a = c.a;
+
+        batch.setColor(r, g, b, a * alpha);
+        batch.draw(textureRegion, x, y, w / 2f, h / 2f, w, h, 1f, 1f, rotation);
         batch.setColor(r, g, b, a);
     }
 

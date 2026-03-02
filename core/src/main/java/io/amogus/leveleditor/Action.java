@@ -13,5 +13,9 @@ public enum Action {
     REDO,
     LAYERS,
     NEW_LAYER,
-    DELETE_LAYER
+    DELETE_LAYER,
+    SELECTION,
+    COPY,
+    PASTE,
+    CUT
 }

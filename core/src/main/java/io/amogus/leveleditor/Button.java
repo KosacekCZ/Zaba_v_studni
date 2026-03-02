@@ -1,10 +1,12 @@
 package io.amogus.leveleditor;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import io.amogus.managers.Managers;
 import io.amogus.managers.TextManager;
 
 public class Button {
+
     public float x;
     public float y;
     public float w;
@@ -12,6 +14,7 @@ public class Button {
     public String texture;
     public String pressedTexture;
     public String iconTexutre;
+    private TextureRegion iconRegion;
     public String btnText;
     public boolean isPressed;
     public boolean isDissabled;
@@ -51,6 +54,16 @@ public class Button {
         this.x = x;
     }
 
+    public Button(float x, float y, float w, float h, TextureRegion iconRegion, boolean isToggleable, Runnable fn) {
+        this.fn = fn;
+        this.iconRegion = iconRegion;
+        this.isToggleable = isToggleable;
+        this.h = h;
+        this.w = w;
+        this.y = y;
+        this.x = x;
+    }
+
     public void onClick() {
         fn.run();
         if (isToggleable) {
@@ -61,10 +74,10 @@ public class Button {
     public void draw() {
         Managers.sm.drawScreen(x, y, w, h, "btn");
 
-        if (btnText == null && iconTexutre != null)  {
-            Managers.sm.drawScreen(x, y, w, h, iconTexutre);
+        if (iconRegion != null) {
+            Managers.sm.drawScreen(x, y, w, h, iconRegion);
         } else {
-            TextManager.draw(btnText, 8, Color.WHITE, false, x, y);
+            Managers.sm.drawScreen(x, y, w, h, iconTexutre);
         }
 
         if (isPressed) {

@@ -111,41 +111,20 @@ public class LevelEditor extends Level {
             new Button(2 * pbw, m16, tw, tw,  "background", () -> {
 
             }),
-            new Button(3 * pbw, m16, tw, tw,  "brick_wall", () -> {
-                inHand = new Prop(0, 0, 32, 32, "brick_wall", 0);}),
-            new Button(4 * pbw, m16, tw, tw,  "bricks_gray", () -> {
-                inHand = new Prop(0, 0, 32, 32, "bricks_gray", 0);
+            new Button(3 * pbw, m16, tw, tw,  "floor_1", () -> {
+                inHand = new Prop(0, 0, 64, 32, 0, "floor_1", PropType.FLOOR);
             }),
-            new Button(5 * pbw, m16, tw, tw,  "bricks_gray_light", () -> {
-                inHand = new Prop(0, 0, 32, 32, "bricks_gray_light", 0);
+            new Button(4 * pbw, m16, tw, tw,  "outer_floor_3", () -> {
+                inHand = new Prop(0, 0, 64, 32, 0, "outer_floor_3", PropType.FLOOR);
             }),
-            new Button(6 * pbw, m16, tw, tw,  "floor_1", () -> {
-                inHand = new Prop(0, 0, 32, 32, "floor_1", 0);
+            new Button(5 * pbw, m16, tw, tw,  "outer_floor_3", () -> {
+                inHand = new Prop(0, 0, 64, 32, 0, "outer_floor_3", PropType.FLOOR);
             }),
-            new Button(7 * pbw, m16, tw, tw,  "outer_floor", () -> {
-                inHand = new Prop(0, 0, 32, 32, "outer_floor", 0);
-            }),
-            new Button(8 * pbw, m16, tw, tw,  "outer_floor_2", () -> {
-                inHand = new Prop(0, 0, 32, 32, "outer_floor_2", 0);
-            }),
-            new Button(9 * pbw, m16, tw, tw,  "outer_floor_3", () -> {
-                inHand = new Prop(0, 0, 32, 32, "outer_floor_3", 0);
-            }),
-            new Button(10 * pbw, m16, tw, tw,  "wall_corner", () -> {
-                inHand = new Prop(0, 0, 128, 128, "wall_corner", 0);
-            }),
-            new Button(11 * pbw, m16, tw, tw,  "wall_doorway", () -> {
-                inHand = new Prop(0, 0, 128, 128, "wall_doorway", 0);
-            }),
-            new Button(12 * pbw, m16, tw, tw,  "wall_straight", () -> {
-                inHand = new Prop(0, 0, 128, 128, "wall_straight", 0);
-            }),
-            new Button(13 * pbw, m16, tw, tw,  "floor_1_iso", () -> {
-                inHand = new Prop(0, 0, 64, 32, "floor_1_iso", 0);
-            }),
-            new Button(14 * pbw, m16, tw, tw,  "floor_outer_1_iso", () -> {
-                inHand = new Prop(0, 0, 64, 32, "floor_outer_1_iso", 0);
+            new Button(5 * pbw, m16, tw, tw,  "outer_floor_3", () -> {
+                inHand = new Prop(0, 0, 64, 32, 0, "outer_floor_3", PropType.FLOOR);
             })
+
+
         ));
 
 
@@ -353,56 +332,6 @@ public class LevelEditor extends Level {
             }
         }
     }
-    /* Obsolete
-    public void handlePlacing() {
-        float mouseY = Gdx.input.getY();
-        float screenHeight = Gdx.graphics.getHeight();
-
-        if (mouseY > 100f && mouseY < screenHeight - 100f && currentLayer != -1) {
-            if (inHand != null && Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
-                Prop newProp = new Prop(
-                    Math.floorDiv((int) vm.getWorldMouseX(), 32) * 32f,
-                    Math.floorDiv((int) vm.getWorldMouseY(), 32) * 32f,
-                    currentLayer,
-                    inHand.w,
-                    inHand.h,
-                    inHand.texture,
-                    inHand.rotation);
-
-                if (placed.stream().noneMatch(p -> p.x == newProp.x && p.y == newProp.y && p.z == newProp.z)) {
-                    placed.add(newProp);
-                }
-
-                undo.clear();
-            }
-        }
-
-        if (Gdx.input.isKeyJustPressed(Input.Keys.R)) {
-            inHand.rotation = (inHand.rotation <= 270 ? inHand.rotation + 90 : 90 );
-            System.out.println(inHand.rotation);
-        }
-    }
-
-    public void handlePlacingDraw() {
-        // Placeable highlight
-        if (inHand != null) {
-            sm.draw(Math.floorDiv((int) vm.getWorldMouseX(), 32) * 32f,
-                Math.floorDiv((int) vm.getWorldMouseY(), 32) * 32f,
-                inHand.w,
-                inHand.h,
-                inHand.rotation,
-                0.5f,
-                inHand.texture
-            );
-            sm.drawRect(Math.floorDiv((int) vm.getWorldMouseX(), 32) * 32f,
-                Math.floorDiv((int) vm.getWorldMouseY(), 32) * 32f,
-                inHand.w,
-                inHand.h,
-                false,
-                Color.GREEN);
-        }
-    }
-    */
 
     public void handlePlacing() {
         float mouseY = Gdx.input.getY();
@@ -423,8 +352,9 @@ public class LevelEditor extends Level {
                 tmpIso.x, tmpIso.y,
                 currentLayer,
                 inHand.w, inHand.h,
+                inHand.rotation,
                 inHand.texture,
-                inHand.rotation
+                inHand.type
             );
 
             if (placed.stream().noneMatch(pr -> pr.x == newProp.x && pr.y == newProp.y && pr.z == newProp.z)) {
@@ -498,49 +428,16 @@ public class LevelEditor extends Level {
         }
     }
 
-    /* Obsolete
-    public void drawPlaced() {
-        if (currentLayer == -1) {
-            for (int l : layers) {
-                placed.stream().filter( p -> p.z == l).forEach(p -> sm.draw(p.x, p.y, p.w, p.h, p.rotation, p.texture));
-            }
-        } else {
-            placed.stream().filter( p -> p.z != currentLayer).forEach(p -> sm.draw(p.x, p.y, p.w, p.h, p.rotation, 0.25f, p.texture));
-            placed.stream().filter( p -> p.z == currentLayer).forEach(p -> sm.draw(p.x, p.y, p.w, p.h, p.rotation, p.texture));
-        }
-    }
-    */
-
     public void drawPlaced() {
         placed.sort((a, b) -> Float.compare(b.y, a.y));
 
         if (currentLayer == -1) {
             for (int l : layers) {
-                placed.stream().filter(p -> p.z == l)
-                    .forEach(p -> sm.drawIso(p.x, p.y, 64f, 32f, 0f, 1f, p.texture));
+                placed.stream().filter(p -> p.z == l).forEach(Prop::draw);
             }
         } else {
-            placed.stream().filter(p -> p.z != currentLayer)
-                .forEach(p -> sm.drawIso(p.x, p.y, 64f, 32f, 0f, 0.3f, p.texture));
-
-            placed.stream().filter(p -> p.z == currentLayer)
-                .forEach(p -> sm.drawIso(p.x, p.y, 64f, 32f, 0f, 1f, p.texture));
-        }
-    }
-
-    public void drawGrid() {
-        int worldSize = 1024;
-        // Grid
-        for (int i = -worldSize; i <= worldSize; i++) {
-            if (i%32 == 0) {
-                sm.drawLine(i, i, -worldSize, worldSize, Color.DARK_GRAY);
-                sm.drawLine(-worldSize, worldSize, i, i, Color.DARK_GRAY);
-            }
-
-            if (i%128 == 0 || i==0) {
-                TextManager.draw(String.valueOf(i), 8, Color.WHITE, false, i, 0);
-                TextManager.draw(String.valueOf(i), 8, Color.WHITE, false,0, i);
-            }
+            placed.stream().filter(p -> p.z != currentLayer).forEach(p -> p.draw(0.5f));
+            placed.stream().filter(p -> p.z == currentLayer).forEach(Prop::draw);
         }
     }
 
