@@ -233,6 +233,11 @@ public class SpriteManager {
         batch.draw(textures.get(textureName), x, y, w, h);
     }
 
+    public void drawScreen(float x, float y, float w, float h, TextureRegion region) {
+        if (mode != Mode.UI) throw new IllegalStateException("drawScreen() called outside UI pass. Use beginScreen() before drawScreen().");
+        batch.draw(region, x, y, w, h);
+    }
+
     public void drawScreen(float x, float y, float w, float h, float rotation, String textureName) {
         if (mode != Mode.UI) throw new IllegalStateException("drawScreen() called outside UI pass. Use beginScreen() before drawScreen().");
         batch.draw(new TextureRegion(textures.get(textureName)), x, y, w / 2f, h / 2f, w, h, 1f, 1f, rotation);
