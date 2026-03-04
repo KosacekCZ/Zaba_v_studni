@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import io.amogus.levels.E_Gamestate;
 import io.amogus.levels.Level;
@@ -117,11 +118,8 @@ public class LevelEditor extends Level {
             new Button(4 * pbw, m16, tw, tw,  "outer_floor_3", () -> {
                 inHand = new Prop(0, 0, 64, 32, 0, "outer_floor_3", PropType.FLOOR);
             }),
-            new Button(5 * pbw, m16, tw, tw,  "outer_floor_3", () -> {
-                inHand = new Prop(0, 0, 64, 32, 0, "outer_floor_3", PropType.FLOOR);
-            }),
-            new Button(5 * pbw, m16, tw, tw,  "outer_floor_3", () -> {
-                inHand = new Prop(0, 0, 64, 32, 0, "outer_floor_3", PropType.FLOOR);
+            new Button(5 * pbw, m16, tw, tw,  new TextureRegion(sm.textures.get("walls_1_iso_set"), 0, 0, 64, 64), true, () -> {
+                inHand = new Prop(-32f,  -16f, 0, 64, 64, 0, new TextureRegion(sm.textures.get("walls_1_iso_set"), 0, 0, 64, 64), PropType.WALL);
             })
 
 
@@ -348,14 +346,38 @@ public class LevelEditor extends Level {
 
             gridToIso(gx, gy, tmpIso);
 
-            Prop newProp = new Prop(
-                tmpIso.x, tmpIso.y,
-                currentLayer,
-                inHand.w, inHand.h,
-                inHand.rotation,
-                inHand.texture,
-                inHand.type
-            );
+            Prop newProp;
+            switch (inHand.type) {
+                case FLOOR ->
+                    newProp = new Prop(
+                        tmpIso.x, tmpIso.y,
+                        currentLayer,
+                        inHand.w, inHand.h,
+                        inHand.rotation,
+                        inHand.texture,
+                        inHand.type
+                    );
+                case WALL ->
+                    newProp = new Prop(
+                        tmpIso.x + inHand.x,
+                        tmpIso.y + inHand.y,
+                        currentLayer,
+                        inHand.w, inHand.h,
+                        inHand.rotation,
+                        inHand.textureRegion,
+                        inHand.type
+                    );
+                default ->
+                    newProp = new Prop(
+                        tmpIso.x, tmpIso.y,
+                        currentLayer,
+                        inHand.w, inHand.h,
+                        inHand.rotation,
+                        inHand.textureRegion,
+                        inHand.type
+                    );
+
+            }
 
             if (placed.stream().noneMatch(pr -> pr.x == newProp.x && pr.y == newProp.y && pr.z == newProp.z)) {
                 placed.add(newProp);
@@ -368,10 +390,6 @@ public class LevelEditor extends Level {
         }
     }
 
-    private int roundIso(float v) {
-        return v >= 0f ? (int) Math.floor(v + 0.5f) : (int) Math.ceil(v - 0.5f);
-    }
-
     public void handlePlacingDraw() {
         if (inHand == null) return;
 
@@ -379,11 +397,16 @@ public class LevelEditor extends Level {
 
         int gx = Math.round(tmpGrid.x);
         int gy = Math.round(tmpGrid.y);
-
         gridToIso(gx, gy, tmpIso);
 
-        sm.drawIso(tmpIso.x, tmpIso.y, 64f, 32f, 0f, 0.5f, inHand.texture);
+        if (inHand.type == PropType.WALL) {
+            sm.draw(tmpIso.x + inHand.x, tmpIso.y + inHand.y, inHand.w, inHand.h, 0f, 0.5f, inHand.textureRegion);
+        } else {
+            sm.drawIso(tmpIso.x, tmpIso.y, 64f, 32f, 0f, 0.5f, inHand.texture);
+        }
         drawIsoDiamond(tmpIso.x, tmpIso.y, isoTileW, isoTileH, Color.GREEN);
+
+
     }
 
     public void handleMouseDrag() {
@@ -496,15 +519,7 @@ public class LevelEditor extends Level {
         sm.drawLine(xLeft,   xTop,    yLeft,   yTop,    color);
     }
 
-    private Vector2 snappedIsoDrawOrigin(float mouseWorldX, float mouseWorldY, float w, float h, Vector2 out) {
-        isoToGrid(mouseWorldX, mouseWorldY, tmpGrid);
-
-        int gx = Math.round(tmpGrid.x);
-        int gy = Math.round(tmpGrid.y);
-
-        gridToIso(gx, gy, tmpIso);
-
-        out.set(tmpIso.x - w / 2f, tmpIso.y - h / 2f);
-        return out;
+    private int roundIso(float v) {
+        return v >= 0f ? (int) Math.floor(v + 0.5f) : (int) Math.ceil(v - 0.5f);
     }
 }

@@ -50,7 +50,13 @@ public class Prop {
 
     public void draw() {
         switch (type) {
-            case WALL -> Managers.sm.draw(x, y, w, h, texture);
+            case WALL -> {
+                if (textureRegion != null) {
+                    Managers.sm.draw(x, y, w, h, 0, 1f, textureRegion);
+                } else  {
+                    Managers.sm.draw(x, y, w, h, 0, 1f, texture);
+                }
+            }
             case FLOOR -> Managers.sm.drawIso(x, y, w, h, 0, 1.0f, texture);
         }
     }
@@ -59,9 +65,9 @@ public class Prop {
         switch (type) {
             case WALL -> {
                 if (textureRegion != null) {
-                    Managers.sm.draw(x, y, w, h, 0, opacity, texture);
-                } else  {
                     Managers.sm.draw(x, y, w, h, 0, opacity, textureRegion);
+                } else  {
+                    Managers.sm.draw(x, y, w, h, 0, opacity, texture);
                 }
             }
             case FLOOR -> Managers.sm.drawIso(x, y, w, h, 0, opacity, texture);
@@ -72,9 +78,9 @@ public class Prop {
         switch (type) {
             case WALL -> {
                 if (textureRegion != null) {
-                    Managers.sm.draw(x, y, w, h, rotation, opacity, texture);
-                } else  {
                     Managers.sm.draw(x, y, w, h, rotation, opacity, textureRegion);
+                } else  {
+                    Managers.sm.draw(x, y, w, h, rotation, opacity, texture);
                 }
             }
             case FLOOR -> Managers.sm.drawIso(x, y, w, h, rotation, opacity, texture);
