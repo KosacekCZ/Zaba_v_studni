@@ -6,4 +6,6 @@ public enum Category {
     DETAILS,
     BOXES,
     ENTITIES,
+    WALLS,
+    FLOORS
 }

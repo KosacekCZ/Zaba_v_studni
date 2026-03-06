@@ -61,6 +61,12 @@ public class LevelEditor extends Level {
     private final Vector2 tmpIso = new Vector2();
     // x ISO test
 
+    // Bounds
+    private final ArrayList<Zone> zones = new ArrayList<>();
+    private boolean zoning = false;
+    private final Vector2 zoneStart = new Vector2();
+    private final Vector2 zoneEnd = new Vector2();
+
 
 
     public LevelEditor(LevelManager lm) {
@@ -68,10 +74,12 @@ public class LevelEditor extends Level {
         sm.setGlobalIllumination(1.0f);
         mouseDragStartVec =  new Vector2(0, 0);
         action = Action.MOVE;
-        category = Category.BLOCKS;
+        category = Category.FLOORS;
         in = Gdx.input;
         g = Gdx.graphics;
         categories = new ArrayList<>();
+        categories.add(Category.FLOORS);
+        categories.add(Category.WALLS);
         categories.add(Category.BLOCKS);
         categories.add(Category.BACKGROUNDS);
         categories.add(Category.BOXES);
@@ -94,55 +102,67 @@ public class LevelEditor extends Level {
     }
 
     public void initPlaceables() {
-        // Blocks
-        placeables.put("Blocks", new ArrayList<>());
-        placeables.get("Blocks").add(new Button(2 * pbw, m16, tw, tw,  "blocks", () -> {
-
-        }));
-
-        // Boxes
-        placeables.put("Boxes", new ArrayList<>());
-        placeables.get("Boxes").add(new Button(2 * pbw, m16, tw, tw,  "boxes", () -> {
-
-        }));
-
-        // Background
-        placeables.put("Backgrounds", new ArrayList<>());
-        placeables.get("Backgrounds").addAll(List.of(
-            new Button(2 * pbw, m16, tw, tw,  "background", () -> {
-
-            }),
+        // Floors
+        placeables.put("Floors", new ArrayList<>());
+        placeables.get("Floors").addAll(List.of(
+            new Button(2 * pbw, m16, tw, tw,  "floors",false, () -> {}),
             new Button(3 * pbw, m16, tw, tw,  "floor_1", () -> {
                 inHand = new Prop(0, 0, 64, 32, 0, "floor_1", PropType.FLOOR);
             }),
             new Button(4 * pbw, m16, tw, tw,  "outer_floor_3", () -> {
                 inHand = new Prop(0, 0, 64, 32, 0, "outer_floor_3", PropType.FLOOR);
-            }),
-            new Button(5 * pbw, m16, tw, tw,  new TextureRegion(sm.textures.get("walls_1_iso_set"), 0, 0, 64, 64), true, () -> {
-                inHand = new Prop(-32f,  -16f, 0, 64, 64, 0, new TextureRegion(sm.textures.get("walls_1_iso_set"), 0, 0, 64, 64), PropType.WALL);
             })
-
-
         ));
+
+        // Walls
+        placeables.put("Walls", new ArrayList<>());
+        placeables.get("Walls").add(
+            new Button(2 * pbw, m16, tw, tw,  "walls", false, () -> {}));
+
+            for(int i = 0; i < sm.textures.get("walls_1_iso_set").getWidth() / 32; i++) {
+                int finalI = i * 32;
+                float paddingX = (((finalI / 32) & 1) == 1 ? 0 : -32f);
+                placeables.get("Walls").add(new Button((3 + i) * pbw, m16, tw, tw,  new TextureRegion(sm.textures.get("walls_1_iso_set"), finalI, 0, 32, 64), true, () -> {
+                    inHand = new Prop(paddingX,  -16f, 0, 32, 64, 0, new TextureRegion(sm.textures.get("walls_1_iso_set"), finalI, 0, 32, 64), PropType.WALL);
+                }));
+            }
+
+        // Blocks
+        placeables.put("Blocks", new ArrayList<>());
+        placeables.get("Blocks").add(new Button(2 * pbw, m16, tw, tw,  "blocks",false, () -> {
+
+        }));
+
+        // Backgrounds
+        placeables.put("Backgrounds", new ArrayList<>());
+        placeables.get("Backgrounds").add(new Button(2 * pbw, m16, tw, tw,  "background",false, () -> {
+
+        }));
+
+        // Boxes
+        placeables.put("Boxes", new ArrayList<>());
+        placeables.get("Boxes").add(new Button(2 * pbw, m16, tw, tw,  "boxes",false, () -> {
+
+        }));
 
 
 
         // Details
         placeables.put("Details", new ArrayList<>());
-        placeables.get("Details").add(new Button(2 * pbw, m16, tw, tw,  "details", () -> {
+        placeables.get("Details").add(new Button(2 * pbw, m16, tw, tw,  "details",false, () -> {
 
         }));
 
         // Entities
         placeables.put("Entities", new ArrayList<>());
-        placeables.get("Entities").add(new Button(2 * pbw, m16, tw, tw,  "entities", () -> {
+        placeables.get("Entities").add(new Button(2 * pbw, m16, tw, tw,  "entities",false, () -> {
 
         }));
     }
 
     public void initButtons() {
         // Block cycler
-        buttons.add(new Button(pbw, m16, tw, tw, "arrows_change", () -> {
+        buttons.add(new Button(pbw, m16, tw, tw, "arrows_change",false, () -> {
             if (!(categoryCycler == categories.size() -1)) {
                 categoryCycler++;
             } else {
@@ -152,15 +172,15 @@ public class LevelEditor extends Level {
         }));
 
         // Top-right
-        buttons.add(new Button(sw - tw - m8, sh - tw - m8, tw, tw,  "save", () -> {
+        buttons.add(new Button(sw - tw - m8, sh - tw - m8, tw, tw,  "save",false, () -> {
+            saveLevel();
+        }));
+
+        buttons.add(new Button(sw - 2 * tw - 2 * m8,sh - tw - m8, tw, tw,"cross",false, () -> {
 
         }));
 
-        buttons.add(new Button(sw - 2 * tw - 2 * m8,sh - tw - m8, tw, tw,"cross", () -> {
-
-        }));
-
-        buttons.add(new Button(sw - 3 * tw - 3 * m8,sh - tw - m8, tw, tw, "step_back", () -> {
+        buttons.add(new Button(sw - 3 * tw - 3 * m8,sh - tw - m8, tw, tw, "step_back",false, () -> {
 
         }));
 
@@ -215,9 +235,11 @@ public class LevelEditor extends Level {
                 currentLayer = (currentLayer > -1 ?  currentLayer - 1 : -1);
                 layers.remove(removedLayer);
             }
-
         }));
 
+        buttons.add(new Button(4 * tw + 5 * m8, Gdx.graphics.getHeight() - tw - m8, tw, tw, "zone", true, () -> {
+            action = Action.ZONE;
+        }));
     }
 
     @Override
@@ -225,6 +247,8 @@ public class LevelEditor extends Level {
         // ISO test
         drawIsoGrid();
         drawPlaced();
+        drawZones();
+        drawZonePreview();
         handlePlacingDraw();
     }
 
@@ -239,6 +263,14 @@ public class LevelEditor extends Level {
         handleButtonInput(buttons);
 
         switch (category) {
+            case FLOORS:
+                handleButtonInput(placeables.get("Floors"));
+                break;
+
+            case WALLS:
+                handleButtonInput(placeables.get("Walls"));
+                break;
+
             case BLOCKS:
                 handleButtonInput(placeables.get("Blocks"));
                 break;
@@ -269,11 +301,9 @@ public class LevelEditor extends Level {
         handleMouseDrag();
         handleScroll();
 
-
         switch (action) {
             case HAND:
             case MOVE:
-
                 break;
             case PLACE:
                 handlePlacing();
@@ -281,13 +311,11 @@ public class LevelEditor extends Level {
             case DELETE:
                 break;
             case ZONE:
+                handleZoning();
                 break;
             case COLLISIONS:
                 break;
         }
-
-
-
     }
 
     public void handleMacros() {
@@ -451,6 +479,45 @@ public class LevelEditor extends Level {
         }
     }
 
+    public void handleZoning() {
+        float mouseY = Gdx.input.getY();
+        float screenHeight = Gdx.graphics.getHeight();
+
+        if (mouseY <= 100f || mouseY >= screenHeight - 100f || currentLayer == -1) return;
+
+        isoToGrid(vm.getWorldMouseX(), vm.getWorldMouseY(), tmpGrid);
+
+        int gx = roundIso(tmpGrid.x);
+        int gy = roundIso(tmpGrid.y);
+
+        if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
+            zoning = true;
+            zoneStart.set(gx, gy);
+            zoneEnd.set(gx, gy);
+        }
+
+        if (zoning && Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
+            zoneEnd.set(gx, gy);
+        }
+
+        if (zoning && !Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
+            int minX = (int)Math.min(zoneStart.x, zoneEnd.x);
+            int minY = (int)Math.min(zoneStart.y, zoneEnd.y);
+            int maxX = (int)Math.max(zoneStart.x, zoneEnd.x);
+            int maxY = (int)Math.max(zoneStart.y, zoneEnd.y);
+
+            int width = maxX - minX + 1;
+            int height = maxY - minY + 1;
+
+            zones.add(new Zone(minX, minY, width, height, currentLayer));
+            zoning = false;
+        }
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.DEL) || Gdx.input.isKeyJustPressed(Input.Keys.FORWARD_DEL)) {
+            zones.removeIf(z -> z.layer == currentLayer && z.contains(gx + 0.5f, gy + 0.5f));
+        }
+    }
+
     public void drawPlaced() {
         placed.sort((a, b) -> Float.compare(b.y, a.y));
 
@@ -519,7 +586,67 @@ public class LevelEditor extends Level {
         sm.drawLine(xLeft,   xTop,    yLeft,   yTop,    color);
     }
 
+    public void drawZones() {
+        for (Zone z : zones) {
+            if (currentLayer != -1 && z.layer != currentLayer) continue;
+            drawZoneIsoRect(z, new Color(1f, 0f, 0f, 0.25f));
+
+        }
+    }
+
+    public void drawZonePreview() {
+        if (!zoning) return;
+
+        int minX = (int)Math.min(zoneStart.x, zoneEnd.x);
+        int minY = (int)Math.min(zoneStart.y, zoneEnd.y);
+        int maxX = (int)Math.max(zoneStart.x, zoneEnd.x);
+        int maxY = (int)Math.max(zoneStart.y, zoneEnd.y);
+
+        Zone preview = new Zone(minX, minY, maxX - minX + 1, maxY - minY + 1, currentLayer);
+        drawZoneIsoRect(preview, new Color(0f, 1f, 0f, 0.35f));
+    }
+
+    private void drawZoneIsoRect(Zone z, Color color) {
+        int startX = (int) z.x;
+        int startY = (int) z.y;
+        int endX = (int) (z.x + z.w);
+        int endY = (int) (z.y + z.h);
+
+        for (int gx = startX; gx < endX; gx++) {
+            for (int gy = startY; gy < endY; gy++) {
+                gridToIso(gx, gy, tmpIso);
+                sm.drawIso(tmpIso.x, tmpIso.y, 64f, 32f, 0f, 0.35f, "zone");
+            }
+        }
+
+        float yOffset = -isoTileH / 2f;
+
+        Vector2 p0 = tmp0;
+        Vector2 p1 = tmp1;
+        Vector2 p2 = new Vector2();
+        Vector2 p3 = new Vector2();
+
+        gridToIso(startX, startY, p0);
+        gridToIso(endX, startY, p1);
+        gridToIso(endX, endY, p2);
+        gridToIso(startX, endY, p3);
+
+        p0.y += yOffset;
+        p1.y += yOffset;
+        p2.y += yOffset;
+        p3.y += yOffset;
+
+        sm.drawLine(p0.x, p1.x, p0.y, p1.y, color);
+        sm.drawLine(p1.x, p2.x, p1.y, p2.y, color);
+        sm.drawLine(p2.x, p3.x, p2.y, p3.y, color);
+        sm.drawLine(p3.x, p0.x, p3.y, p0.y, color);
+    }
+
     private int roundIso(float v) {
         return v >= 0f ? (int) Math.floor(v + 0.5f) : (int) Math.ceil(v - 0.5f);
+    }
+
+    private void saveLevel() {
+
     }
 }

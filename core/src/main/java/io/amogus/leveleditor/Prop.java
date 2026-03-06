@@ -89,6 +89,6 @@ public class Prop {
 
     @Override
     public String toString() {
-        return texture + ", " + x + ", " + y + ", " + z + ", " + w + ", " + h + ", " + rotation + ";";
+        return "Prop," + texture + "," + x + "," + y + "," + z + "," + w + "," + h + "," + rotation + ";";
     }
 }
