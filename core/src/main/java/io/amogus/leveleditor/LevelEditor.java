@@ -13,6 +13,10 @@ import io.amogus.managers.Managers;
 import io.amogus.managers.TextManager;
 import io.amogus.managers.ViewportManager;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -647,6 +651,31 @@ public class LevelEditor extends Level {
     }
 
     private void saveLevel() {
+        File baseFolder = new File("Levels/");
+        if (!baseFolder.exists() || !baseFolder.isDirectory()) {
+            System.err.println("The 'assets' folder does not exist or is not a directory.");
+            return;
+        }
 
+        File[] levels = baseFolder.listFiles(File::isFile);
+        assert levels != null;
+        File newLevel = new File("Levels/" + "Level_" + levels.length + ".lvl");
+        try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter(newLevel, true));
+
+            for (Prop p : placed) {
+                writer.write(p.toString());
+                writer.newLine();
+            }
+
+            for (Zone z : zones) {
+                writer.write(z.toString());
+                writer.newLine();
+            }
+
+            writer.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
